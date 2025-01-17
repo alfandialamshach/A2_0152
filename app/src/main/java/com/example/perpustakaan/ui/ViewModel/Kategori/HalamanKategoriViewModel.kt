@@ -7,42 +7,43 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.network.HttpException
 import com.example.perpustakaan.Repository.BukuRepository
+import com.example.perpustakaan.Repository.KategoriRepository
 import com.example.perpustakaan.model.Buku
+import com.example.perpustakaan.model.Kategori
 import com.example.perpustakaan.ui.ViewModel.Home.HomeUtamaUiState
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-ealed class HomeKategoriUiState {
-    data class Success(val buku: List<Buku>) : HomeKategoriUiState()
+sealed class HomeKategoriUiState {
+    data class Success(val kategori: List<Kategori>) : HomeKategoriUiState()
     object  Error : HomeKategoriUiState()
     object Loading : HomeKategoriUiState()
 }
 
-class HomeViewModel (private val kategori: KategoriRepository) : ViewModel(){
-    var bukuUIState: HomeUtamaUiState by mutableStateOf(HomeUtamaUiState.Loading)
+class HomeKategoriViewModel (private val kategori: KategoriRepository) : ViewModel(){
+    var kategoriUIState: HomeKategoriUiState by mutableStateOf(HomeKategoriUiState.Loading)
         private set
     init {
-        getBuku()
+        getKategori()
     }
 
-    fun getBuku(){
+    fun getKategori(){
         viewModelScope.launch {
-            bukuUIState = HomeUtamaUiState.Loading
-            bukuUIState = try {
-//                HomeUiState.Success(mhs.getAllMahasiswa())
-                HomeUtamaUiState.Success(buku.getAllBuku().data)
+            kategoriUIState = HomeKategoriUiState.Loading
+            kategoriUIState = try {
+                HomeKategoriUiState.Success(kategori.getAllKategori().data)
             }catch (e: IOException){
-                HomeUtamaUiState.Error
+                HomeKategoriUiState.Error
             }catch (e: HttpException){
-                HomeUtamaUiState.Error
+                HomeKategoriUiState.Error
             }
         }
     }
 
-    fun deleteBuku(id_buku : String){
+    fun deleteBuku(id_kategori : Int){
         viewModelScope.launch {
             try {
-                buku.deleteBuku(id_buku)
+                kategori.deleteKategori(id_kategori)
             }catch (e: IOException){
                 HomeUtamaUiState.Error
             }catch (e: HttpException){
