@@ -54,7 +54,7 @@ object DestinasiHome: DestinasiNavigasi {
 fun HomeScreen(
     navigateToItemEntry:()->Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (String) -> Unit ={},
+    onDetailClick: (Int) -> Unit ={},
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -84,7 +84,7 @@ fun HomeScreen(
             homeUtamaUiState = viewModel.bukuUIState,
             retryAction = {viewModel.getBuku()}, modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,onDeleteClick = {
-                viewModel.deleteBuku(it.nama_buku)
+                viewModel.deleteBuku(it.id_buku)
                 viewModel.getBuku()
             }
         )
@@ -97,7 +97,7 @@ fun HomeStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Buku) -> Unit = {},
-    onDetailClick: (String) -> Unit
+    onDetailClick: (Int) -> Unit
 ){
     when (homeUtamaUiState){
         is HomeUtamaUiState.Loading-> OnLoading(modifier = modifier.fillMaxSize())
@@ -111,7 +111,7 @@ fun HomeStatus(
                 BukuList(
                     buku = homeUtamaUiState.buku,modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
-                        onDetailClick(it.nama_buku)
+                        onDetailClick(it.id_buku)
                     },
                     onDeleteClick={
                         onDeleteClick(it)
