@@ -20,18 +20,18 @@ interface KategoriService {
         "Accept: application/json",
         "Content-Type: application/json",
     )
-    @GET(".")
+    @GET("kategori/")
     suspend fun getAllKategori(): AllKategoriResponse
 
     @GET("{id_kategori}")
-    suspend fun getKategoriID(@Path("id_buku")id_kategori:String): KategoriDetailResponse
+    suspend fun getKategoriID(@Path("id_kategori")id_kategori:Int): KategoriDetailResponse
 
     @POST("store")
     suspend fun insertKategori(@Body kategori: Kategori)
 
     @PUT("{id_kategori}")
-    suspend fun updateKategori(@Path("id_kategori")id_kategori: String, @Body kategori: Kategori)
+    suspend fun updateKategori(@Path("id_kategori")id_kategori: Int, @Body kategori: Kategori)
 
     @DELETE("{id_kategori}")
-    suspend fun deleteKategori(@Path("id_kategori")id_kategori: String): retrofit2.Response<Void>
+    suspend fun deleteKategori(@Path("id_kategori")id_kategori: Int): retrofit2.Response<Void>
 }
