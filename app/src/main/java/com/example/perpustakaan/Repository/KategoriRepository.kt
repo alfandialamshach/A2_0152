@@ -12,9 +12,9 @@ import java.io.IOException
 interface KategoriRepository{
     suspend fun getAllKategori(): AllKategoriResponse
     suspend fun insertKategori(kategori: Kategori)
-    suspend fun updateKategori(id_kategori:String, kategori: Kategori)
-    suspend fun deleteKategori(id_kategori: String)
-    suspend fun getKategoriID(id_kategori: String) : Kategori
+    suspend fun updateKategori(id_kategori:Int, kategori: Kategori)
+    suspend fun deleteKategori(id_kategori: Int)
+    suspend fun getKategoriID(id_kategori: Int) : Kategori
 }
 
 
@@ -29,11 +29,11 @@ class NetworkKategoriRepository(
     override suspend fun insertKategori(kategori: Kategori) {
         kategoriApiService.insertKategori(kategori)
     }
-    override suspend fun updateKategori(id_kategori: String, kategori: Kategori) {
+    override suspend fun updateKategori(id_kategori: Int, kategori: Kategori) {
         kategoriApiService.updateKategori(id_kategori, kategori)
     }
 
-    override suspend fun deleteKategori(id_kategori: String) {
+    override suspend fun deleteKategori(id_kategori: Int) {
         try{
             val response = kategoriApiService.deleteKategori(id_kategori)
             if (!response.isSuccessful){
@@ -49,7 +49,7 @@ class NetworkKategoriRepository(
     }
 
 
-    override suspend fun getKategoriID(id_kategori: String): Kategori {
+    override suspend fun getKategoriID(id_kategori: Int): Kategori {
         return kategoriApiService.getKategoriID(id_kategori).data
     }
 
