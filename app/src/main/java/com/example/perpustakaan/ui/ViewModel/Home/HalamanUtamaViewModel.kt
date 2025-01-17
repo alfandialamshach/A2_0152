@@ -39,7 +39,7 @@ class HomeViewModel (private val buku: BukuRepository) : ViewModel(){
         }
     }
 
-    fun deleteBuku(id_buku : String){
+    fun deleteBuku(id_buku : Int){
         viewModelScope.launch {
             try {
                 buku.deleteBuku(id_buku)
