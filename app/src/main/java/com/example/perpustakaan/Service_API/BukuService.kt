@@ -16,19 +16,19 @@ interface BukuService {
         "Accept: application/json",
         "Content-Type: application/json",
     )
-    @GET(".")
+    @GET("buku/")
     suspend fun getAllBuku(): AllBukuResponse
 
     @GET("{id_buku}")
-    suspend fun getBukuID(@Path("id_buku")id_buku:String):BukuDetailResponse
+    suspend fun getBukuID(@Path("id_buku")id_buku:Int):BukuDetailResponse
 
     @POST("store")
     suspend fun insertBuku(@Body buku: Buku)
 
     @PUT("{id_buku}")
-    suspend fun updateBuku(@Path("id_buku")id_buku: String, @Body buku: Buku)
+    suspend fun updateBuku(@Path("id_buku")id_buku: Int, @Body buku: Buku)
 
     @DELETE("{id_buku}")
-    suspend fun deleteBuku(@Path("id_buku")id_buku: String): retrofit2.Response<Void>
+    suspend fun deleteBuku(@Path("id_buku")id_buku: Int): retrofit2.Response<Void>
 }
 
