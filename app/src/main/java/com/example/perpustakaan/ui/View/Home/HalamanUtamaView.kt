@@ -43,32 +43,47 @@ import com.example.perpustakaan.ui.ViewModel.Home.HomeUtamaUiState
 import com.example.perpustakaan.ui.ViewModel.Home.HomeViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object DestinasiHome: DestinasiNavigasi {
-     val route ="home"
-    val titleRes = "Perpustakaan"
+    override val route ="home"
+   override val titleRes = "Perpustakaan"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun HomeScreen(
-    navigateToItemEntry:()->Unit,
+    navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (Int) -> Unit ={},
+    onDetailClick: (Int) -> Unit = {},
+    onKategoriClick: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiHome.titleRes,
-                canNavigateBack = false,
+                judul = "Perpustakaan",
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
-                    viewModel.getBuku()
-                }
+
+                },
+                isMenuEnabled = true, // Menampilkan ikon menu
+                isKategoriEnabled = true, // Mengaktifkan menu Dosen
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
             )
+
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -78,18 +93,22 @@ fun HomeScreen(
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Buku")
             }
-        },
-    ) { innerPadding->
+        }
+    ) { innerPadding ->
+        // Konten utama halaman
         HomeStatus(
             homeUtamaUiState = viewModel.bukuUIState,
-            retryAction = {viewModel.getBuku()}, modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick,onDeleteClick = {
+            retryAction = { viewModel.getBuku() },
+            modifier = Modifier.padding(innerPadding),
+            onDetailClick = onDetailClick,
+            onDeleteClick = {
                 viewModel.deleteBuku(it.id_buku)
                 viewModel.getBuku()
             }
         )
     }
 }
+
 
 @Composable
 fun HomeStatus(
@@ -193,12 +212,17 @@ fun BukuList(
     }
 }
 
+
 @Composable
 fun BukuCard(
     buku: Buku,
     modifier: Modifier = Modifier,
-    onDeleteClick:(Buku)->Unit={}
-){
+    onDeleteClick: (Buku) -> Unit = {}
+) {
+    // Format tanggal menggunakan SimpleDateFormat
+    val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val formattedDate = simpleDateFormat.format(buku.tanggal_terbit)
+
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
@@ -221,7 +245,7 @@ fun BukuCard(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {onDeleteClick(buku)}) {
+                IconButton(onClick = { onDeleteClick(buku) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -230,8 +254,9 @@ fun BukuCard(
                 }
             }
 
+            // Tampilkan tanggal dengan format sederhana
             Text(
-                text = "Tanggal Terbit: ${buku.tanggal_terbit}",
+                text = "Tanggal Terbit: $formattedDate",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
@@ -241,3 +266,4 @@ fun BukuCard(
         }
     }
 }
+
