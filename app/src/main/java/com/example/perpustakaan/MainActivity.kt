@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.perpustakaan.ui.View.Home.HomeScreen
+import com.example.perpustakaan.ui.ViewModel.PerpustakanApp
 import com.example.perpustakaan.ui.theme.PerpustakaanTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             PerpustakaanTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                   HomeScreen(
-                       navigateToItemEntry = {},
+                   PerpustakanApp(
+//                       navigateToItemEntry = {},
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
