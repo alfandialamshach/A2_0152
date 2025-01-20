@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,10 +37,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.R
 import com.example.perpustakaan.model.Buku
 import com.example.perpustakaan.model.Kategori
+import com.example.perpustakaan.model.Penerbit
 import com.example.perpustakaan.ui.ViewModel.Home.HomeUtamaUiState
 import com.example.perpustakaan.ui.ViewModel.Home.HomeViewModel
 import com.example.perpustakaan.ui.ViewModel.Kategori.HomeKategoriUiState
@@ -48,9 +52,9 @@ import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 
 
-object DestinasiHome: DestinasiNavigasi {
-    val route ="home kategori"
-    val titleRes = "Perpustakaan"
+object DestinasiHomeKategori: DestinasiNavigasi {
+    override val route = "home_kategori" // Menggunakan garis bawah sebagai pengganti spasi
+    override val titleRes = "Perpustakaan"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,19 +63,27 @@ fun HomeKategori(
     navigateToItemEntry:()->Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (Int) -> Unit ={},
+    onUpdateKategoriClick: (Kategori) -> Unit, // Menambahkan parameter untuk update
     viewModel: HomeKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                title = DestinasiHome.titleRes,
-                canNavigateBack = false,
+                judul = "Kategori",
+                onKategoriClick = {},
+                onPenulisClick = {},
+                onPenerbitClick = {},
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
-                    viewModel.getKategori()
-                }
+
+                },
+                isMenuEnabled = true, // Menampilkan ikon menu
+                isKategoriEnabled = false, // Mengaktifkan menu Dosen
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
             )
         },
         floatingActionButton = {
@@ -90,7 +102,8 @@ fun HomeKategori(
             onDetailClick = onDetailClick,onDeleteClick = {
                 viewModel.deleteBuku(it.id_kategori)
                 viewModel.getKategori()
-            }
+            },
+            onUpdateKategoriClick = onUpdateKategoriClick
         )
     }
 }
@@ -101,7 +114,8 @@ fun HomeStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Kategori) -> Unit = {},
-    onDetailClick: (Int) -> Unit
+    onDetailClick: (Int) -> Unit,
+    onUpdateKategoriClick: (Kategori) -> Unit, // Menambahkan parameter untuk update
 ){
     when (homeKategoriUiState){
         is HomeKategoriUiState.Loading-> OnLoading(modifier = modifier.fillMaxSize())
@@ -119,7 +133,8 @@ fun HomeStatus(
                     },
                     onDeleteClick={
                         onDeleteClick(it)
-                    }
+                    },
+                    onUpdateKategoriClick = onUpdateKategoriClick
                 )
             }
         is HomeKategoriUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
@@ -175,7 +190,8 @@ fun BukuList(
     kategori: List<Kategori>,
     modifier: Modifier = Modifier,
     onDetailClick:(Kategori)->Unit,
-    onDeleteClick: (Kategori) -> Unit = {}
+    onDeleteClick: (Kategori) -> Unit = {},
+    onUpdateKategoriClick: (Kategori) -> Unit = {}  // Menambahkan parameter untuk update
 ){
     LazyColumn(
         modifier = modifier,
@@ -190,6 +206,9 @@ fun BukuList(
                     .clickable{onDetailClick(kategori)},
                 onDeleteClick={
                     onDeleteClick(kategori)
+                },
+                onUpdateKategoriClick = {
+                    onUpdateKategoriClick(kategori)  // Menambahkan fungsi update
                 }
             )
 
@@ -201,7 +220,8 @@ fun BukuList(
 fun BukuCard(
     kategori: Kategori,
     modifier: Modifier = Modifier,
-    onDeleteClick:(Kategori)->Unit={}
+    onDeleteClick:(Kategori)->Unit={},
+    onUpdateKategoriClick: (Kategori) -> Unit = {}  // Menambahkan parameter untuk update
 ){
     Card(
         modifier = modifier,
@@ -230,6 +250,14 @@ fun BukuCard(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error
+                    )
+                }
+                // Tombol Update
+                IconButton(onClick = { onUpdateKategoriClick(kategori) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,  // Menambahkan icon Edit untuk tombol Update
+                        contentDescription = "Update",
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
