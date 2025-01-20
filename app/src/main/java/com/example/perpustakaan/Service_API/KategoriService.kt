@@ -23,15 +23,15 @@ interface KategoriService {
     @GET("kategori/")
     suspend fun getAllKategori(): AllKategoriResponse
 
-    @GET("{id_kategori}")
+    @GET("kategori/{id_kategori}")
     suspend fun getKategoriID(@Path("id_kategori")id_kategori:Int): KategoriDetailResponse
 
-    @POST("store")
+    @POST("kategori/store")
     suspend fun insertKategori(@Body kategori: Kategori)
 
-    @PUT("{id_kategori}")
+    @PUT("kategori/{id_kategori}")
     suspend fun updateKategori(@Path("id_kategori")id_kategori: Int, @Body kategori: Kategori)
 
-    @DELETE("{id_kategori}")
+    @DELETE("kategori/{id_kategori}")
     suspend fun deleteKategori(@Path("id_kategori")id_kategori: Int): retrofit2.Response<Void>
 }
