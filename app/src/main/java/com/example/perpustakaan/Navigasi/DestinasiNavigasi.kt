@@ -1,4 +1,6 @@
 package com.example.perpustakaan.Navigasi
 
-interface DestinasiNavigasi {
+interface DestinasiNavigasi{
+    val route : String
+    val titleRes : String
 }
