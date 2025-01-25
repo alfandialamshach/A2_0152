@@ -13,12 +13,26 @@ import kotlinx.coroutines.launch
 
 class InsertKategoriViewModel(private val kategori: KategoriRepository) : ViewModel() {
     var kategoriuiState by mutableStateOf(InsertKategoriUiState())
-
+    var errorMessage by mutableStateOf("")
     fun updateInsertKategoriState(insertKategoriUiEvent: InsertKategoriUiEvent) {
         kategoriuiState = InsertKategoriUiState(insertKategoriUiEvent =insertKategoriUiEvent)
     }
 
     suspend fun insertKategori() {
+
+        val uiEvent = kategoriuiState.insertKategoriUiEvent
+        // Validation
+        if (uiEvent.nama_kategori.isEmpty()) {
+            errorMessage = "Nama Kategori tidak boleh kosong"
+            return
+        }
+        if (uiEvent.deskripsi_kategori.isEmpty()) {
+            errorMessage = "Alamat tidak boleh kosong"
+            return
+        }
+
+
+
         viewModelScope.launch {
             try {
                 kategori.insertKategori(kategoriuiState.insertKategoriUiEvent.toKategori())
