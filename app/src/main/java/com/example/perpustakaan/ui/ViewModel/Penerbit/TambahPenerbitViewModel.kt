@@ -13,12 +13,29 @@ import kotlinx.coroutines.launch
 
 class InsertPenerbitViewModel(private val penerbit: PenerbitRepository) : ViewModel() {
     var penerbituiState by mutableStateOf(InsertPenerbitUiState())
-
+    var errorMessage by mutableStateOf("")
     fun updateInsertPenerbitState(insertPenerbitUiEvent: InsertPenerbitUiEvent) {
         penerbituiState = InsertPenerbitUiState(insertPenerbitUiEvent = insertPenerbitUiEvent)
     }
 
     suspend fun insertPenerbit() {
+
+        val uiEvent = penerbituiState.insertPenerbitUiEvent
+
+        // Validation
+        if (uiEvent.nama_penerbit.isEmpty()) {
+            errorMessage = "Nama penerbit tidak boleh kosong"
+            return
+        }
+        if (uiEvent.alamat_penerbit.isEmpty()) {
+            errorMessage = "Alamat tidak boleh kosong"
+            return
+        }
+
+        if (uiEvent.telepon_penerbit.isEmpty() || !isValidPhoneNumber(uiEvent.telepon_penerbit)) {
+            errorMessage = "Nomor telepon harus berupa angka dan format yang valid"
+            return
+        }
         viewModelScope.launch {
             try {
                 penerbit.insertPenerbit(penerbituiState.insertPenerbitUiEvent.toPenerbit())
@@ -26,6 +43,11 @@ class InsertPenerbitViewModel(private val penerbit: PenerbitRepository) : ViewMo
                 e.printStackTrace()
             }
         }
+    }
+    private fun isValidPhoneNumber(phone: String): Boolean {
+        // Regex untuk validasi nomor telepon (hanya angka, 10-15 digit)
+        val regex = Regex("^\\d{10,15}$")
+        return regex.matches(phone)
     }
 }
 
