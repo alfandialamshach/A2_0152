@@ -23,7 +23,6 @@ import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 
 object DestinasiHomeProfil : DestinasiNavigasi {
     override val route: String = "Home"
-    override val titleRes = "Perpustakaan"
 }
 
 @Composable
