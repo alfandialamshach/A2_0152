@@ -1,6 +1,8 @@
 package com.example.perpustakaan.ui.ViewModel.Buku
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +25,7 @@ class UpdateBukuViewModel(
     private val penulisRepository: PenulisRepository,
     private val penerbitRepository: PenerbitRepository
 ) : ViewModel() {
-
+    var errorMessage by mutableStateOf("")
     val id_buku: Int = checkNotNull(savedStateHandle["id_buku"])
 
     var bukuUiState = mutableStateOf(InsertBukuUiState())
@@ -74,6 +76,21 @@ class UpdateBukuViewModel(
 
     // Update Buku Data
     fun updateBuku(buku: Buku) {
+
+        val uiEvent = bukuUiState.value.insertBukuUiEvent
+        // Validation
+        if (uiEvent.nama_buku.isEmpty()) {
+            errorMessage = "Nama Buku tidak boleh kosong"
+            return
+        }
+        if (uiEvent.deskripsi_buku.isEmpty()) {
+            errorMessage = "Deskripsi Buku tidak boleh kosong"
+            return
+        }
+        if (uiEvent.status_buku.isEmpty()) {
+            errorMessage = "Status Buku tidak boleh kosong"
+            return
+        }
         viewModelScope.launch {
             try {
                 bukuRepository.updateBuku(id_buku = id_buku, buku)
