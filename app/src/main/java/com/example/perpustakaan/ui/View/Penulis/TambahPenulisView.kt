@@ -26,52 +26,66 @@ import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiEvent
 import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiState
 import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import kotlinx.coroutines.launch
 
 
 object DestinasiTambahPenulis: DestinasiNavigasi {
    override  val route = "item_penulis"
-   override  val titleRes = "Tambah Penulis"
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TambahPenulisScreen(
-    navigateBack:()->Unit,
+    navigateBack: () -> Unit,
+    onProfilClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
+    onKategoriClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: InsertPenulisViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
+) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val navController = rememberNavController()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
                 judul = "Tambah Penulis",
-                onKategoriClick = {},
+                onKategoriClick = onKategoriClick,
                 onPenulisClick = {},
-                onPenerbitClick = {},
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
-                onRefresh = {
-
-                },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
+                onRefresh = {},
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = false,
+                isPenerbitEnabled = true
             )
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isHomeEnabled = false,
+                onProfileClick = onProfilClick,
+                onAddDataClick = {}, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick // Handle Back click action
+            )
+        },
     ) { innerPadding ->
         TambahBodyPenulis(
             insertPenulisUiState = viewModel.penulisuiState,
+            errorMessage = viewModel.errorMessage,
             onPenulisValueChange = viewModel::updateInsertPenulisState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertPenulis()
-                    navigateBack()
+                    if (viewModel.errorMessage.isEmpty()) {
+                        navigateBack()
+                    }
                 }
             },
             modifier = Modifier
@@ -85,6 +99,7 @@ fun TambahPenulisScreen(
 @Composable
 fun TambahBodyPenulis(
     insertPenulisUiState: InsertPenulisUiState,
+    errorMessage: String,
     onPenulisValueChange: (InsertPenulisUiEvent) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -98,10 +113,25 @@ fun TambahBodyPenulis(
             onValueChange = onPenulisValueChange,
             modifier = Modifier.fillMaxWidth()
         )
+
+        // Display error message if any
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+
         Button(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = insertPenulisUiState.insertPenulisUiEvent.nama_penulis.isNotEmpty() &&
+                    insertPenulisUiState.insertPenulisUiEvent.biografi.isNotEmpty() &&
+                    insertPenulisUiState.insertPenulisUiEvent.kontak.isNotEmpty() &&
+                    errorMessage.isEmpty()
         ) {
             Text(text = "Simpan")
         }
@@ -110,31 +140,28 @@ fun TambahBodyPenulis(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun FormInputPenulis(
     insertPenulisUiEvent: InsertPenulisUiEvent,
     modifier: Modifier = Modifier,
-    onValueChange:(InsertPenulisUiEvent)->Unit = {},
+    onValueChange: (InsertPenulisUiEvent) -> Unit = {},
     enabled: Boolean = true
-){
+) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         OutlinedTextField(
             value = insertPenulisUiEvent.nama_penulis,
-            onValueChange = {onValueChange(insertPenulisUiEvent.copy(nama_penulis = it))},
+            onValueChange = { onValueChange(insertPenulisUiEvent.copy(nama_penulis = it)) },
             label = { Text("Nama") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
 
-
-
         OutlinedTextField(
             value = insertPenulisUiEvent.biografi,
-            onValueChange = {onValueChange(insertPenulisUiEvent.copy(biografi = it))},
+            onValueChange = { onValueChange(insertPenulisUiEvent.copy(biografi = it)) },
             label = { Text("Biografi") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
@@ -143,15 +170,14 @@ fun FormInputPenulis(
 
         OutlinedTextField(
             value = insertPenulisUiEvent.kontak,
-            onValueChange = {onValueChange(insertPenulisUiEvent.copy(kontak = it))},
+            onValueChange = { onValueChange(insertPenulisUiEvent.copy(kontak = it)) },
             label = { Text("Kontak") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
 
-
-        if (enabled){
+        if (enabled) {
             Text(
                 text = "Isi Semua Data!",
                 modifier = Modifier.padding(12.dp)
@@ -162,6 +188,5 @@ fun FormInputPenulis(
             thickness = 8.dp,
             modifier = Modifier.padding(12.dp)
         )
-
     }
 }
