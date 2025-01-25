@@ -68,6 +68,21 @@ class InsertBukuViewModel(
     fun insertBuku() {
         isLoading = true
         errorMessage = null
+        val uiEvent = bukuUiState.insertBukuUiEvent
+        // Validation
+        if (uiEvent.nama_buku.isEmpty()) {
+            errorMessage = "Nama Buku tidak boleh kosong"
+            return
+        }
+        if (uiEvent.deskripsi_buku.isEmpty()) {
+            errorMessage = "Deskripsi Buku tidak boleh kosong"
+            return
+        }
+        if (uiEvent.status_buku.isEmpty()) {
+            errorMessage = "Status Buku tidak boleh kosong"
+            return
+        }
+
         viewModelScope.launch {
             try {
                 Log.d("InsertBukuViewModel", "Inserting Buku: $bukuUiState")
