@@ -1,114 +1,95 @@
 package com.example.perpustakaan.ui.View.Buku
 
 import android.app.DatePickerDialog
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.ui.ViewModel.Buku.InsertBukuUiEvent
 import com.example.perpustakaan.ui.ViewModel.Buku.InsertBukuUiState
 import com.example.perpustakaan.ui.ViewModel.Buku.InsertBukuViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.RadioButton
-import androidx.compose.ui.Alignment
 import com.example.perpustakaan.model.Kategori
 import com.example.perpustakaan.model.Penerbit
 import com.example.perpustakaan.model.Penulis
-import com.example.perpustakaan.ui.ViewModel.Kategori.InsertKategoriViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.DropdownField
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
-object DestinasiTambahBuku: DestinasiNavigasi {
+object DestinasiTambahBuku : DestinasiNavigasi {
     override val route = "item_entry"
-   override  val titleRes = "Entry Mhs"
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TambahBukuScreen(
     navigateBack: () -> Unit,
+    onProfilClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
+    onKategoriClick: () -> Unit,
     modifier: Modifier = Modifier,
-
     viewModel: InsertBukuViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    // Observasi state untuk kategori, penulis, dan penerbit
-    val kategoriList = viewModel.kategoriList
-    val penulisList = viewModel.penulisList
-    val penerbitList = viewModel.penerbitList
 
     Scaffold(
         topBar = {
             CustomTopAppBar(
                 judul = "Tambah Buku",
-                onKategoriClick = {},
-                onPenulisClick = {  },
-                onPenerbitClick = {},
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
-                onRefresh = {
-
-                },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
+                onRefresh = {},
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = true,
+                isPenerbitEnabled = true
             )
-
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+               isHomeEnabled = false,
+                onProfileClick = onProfilClick,
+                onAddDataClick = {}, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick // Handle Back click action
+            )
+        },
     ) { innerPadding ->
         TambahBodyBuku(
             insertUiState = viewModel.bukuUiState,
+            errorMessage = viewModel.errorMessage,
             onBukuValueChange = viewModel::updateInsertBukuState,
             onSimpanClick = {
                 coroutineScope.launch {
                     viewModel.insertBuku()
-                    navigateBack()
+                    if (viewModel.errorMessage.isEmpty()) {
+                        navigateBack()
+                    }
                 }
             },
             modifier = Modifier
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth(),
-            kategoriList = kategoriList,
-            penulisList = penulisList,
-            penerbitList = penerbitList
+            kategoriList = viewModel.kategoriList,
+            penulisList = viewModel.penulisList,
+            penerbitList = viewModel.penerbitList
         )
     }
 }
@@ -118,6 +99,7 @@ fun TambahBodyBuku(
     insertUiState: InsertBukuUiState,
     onBukuValueChange: (InsertBukuUiEvent) -> Unit,
     onSimpanClick: () -> Unit,
+    errorMessage: String,
     modifier: Modifier = Modifier,
     kategoriList: List<Kategori>,
     penulisList: List<Penulis>,
@@ -135,6 +117,14 @@ fun TambahBodyBuku(
             penulisList = penulisList,
             penerbitList = penerbitList
         )
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
         Button(
             onClick = onSimpanClick,
             modifier = Modifier.fillMaxWidth()
@@ -155,7 +145,6 @@ fun FormInputBuku(
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-
     val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     val selectedDate = remember { mutableStateOf(insertBukuUiEvent.tanggal_terbit ?: Date()) }
 
@@ -177,6 +166,7 @@ fun FormInputBuku(
             label = { Text("Nama Buku") },
             modifier = Modifier.fillMaxWidth()
         )
+
         OutlinedTextField(
             value = insertBukuUiEvent.deskripsi_buku,
             onValueChange = { onValueChange(insertBukuUiEvent.copy(deskripsi_buku = it)) },
@@ -185,35 +175,42 @@ fun FormInputBuku(
         )
 
         // RadioButton untuk status buku
+        // RadioButton untuk status buku
         Text("Status Buku")
-        statusBukuOptions.forEach { status ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                RadioButton(
-                    selected = selectedStatusIndex.value == status,
-                    onClick = {
-                        selectedStatusIndex.value = status
-                        onValueChange(insertBukuUiEvent.copy(status_buku = status))
-                    }
-                )
-                Text(
-                    text = status,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp), // Tambahkan jarak antar elemen
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            statusBukuOptions.forEach { status ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        selected = selectedStatusIndex.value == status,
+                        onClick = {
+                            selectedStatusIndex.value = status
+                            onValueChange(insertBukuUiEvent.copy(status_buku = status))
+                        }
+                    )
+                    Text(
+                        text = status,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
             }
         }
+
 
         // Dropdown untuk Kategori
         DropdownField(
             label = "Kategori",
             items = kategoriList.map { it.nama_kategori },
-            selectedItem = kategoriList.find { it.id_kategori == insertBukuUiEvent.id_kategori }?.nama_kategori ?: "",
+            selectedItem = kategoriList.find { it.id_kategori == insertBukuUiEvent.id_kategori }?.nama_kategori
+                ?: "",
             onItemSelected = { index ->
-                val selectedKategori = kategoriList.getOrNull(index)
-                selectedKategori?.let {
+                kategoriList.getOrNull(index)?.let {
                     onValueChange(insertBukuUiEvent.copy(id_kategori = it.id_kategori))
                 }
             },
@@ -225,10 +222,10 @@ fun FormInputBuku(
         DropdownField(
             label = "Penulis",
             items = penulisList.map { it.nama_penulis },
-            selectedItem = penulisList.find { it.id_penulis == insertBukuUiEvent.id_penulis }?.nama_penulis ?: "",
+            selectedItem = penulisList.find { it.id_penulis == insertBukuUiEvent.id_penulis }?.nama_penulis
+                ?: "",
             onItemSelected = { index ->
-                val selectedPenulis = penulisList.getOrNull(index)
-                selectedPenulis?.let {
+                penulisList.getOrNull(index)?.let {
                     onValueChange(insertBukuUiEvent.copy(id_penulis = it.id_penulis))
                 }
             },
@@ -240,10 +237,10 @@ fun FormInputBuku(
         DropdownField(
             label = "Penerbit",
             items = penerbitList.map { it.nama_penerbit },
-            selectedItem = penerbitList.find { it.id_penerbit == insertBukuUiEvent.id_penerbit }?.nama_penerbit ?: "",
+            selectedItem = penerbitList.find { it.id_penerbit == insertBukuUiEvent.id_penerbit }?.nama_penerbit
+                ?: "",
             onItemSelected = { index ->
-                val selectedPenerbit = penerbitList.getOrNull(index)
-                selectedPenerbit?.let {
+                penerbitList.getOrNull(index)?.let {
                     onValueChange(insertBukuUiEvent.copy(id_penerbit = it.id_penerbit))
                 }
             },
