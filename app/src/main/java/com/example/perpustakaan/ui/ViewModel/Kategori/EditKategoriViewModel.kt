@@ -1,6 +1,8 @@
 package com.example.perpustakaan.ui.ViewModel.Kategori
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +22,7 @@ class UpdateKategoriViewModel(
     // Retrieve the id penulis from SavedStateHandle
     val id_kategori: Int = checkNotNull(savedStateHandle[DestinasiUpdateKategori.ID_Kategori])
 
-
+    var errorMessage by mutableStateOf("")
     var kategoriuiState = mutableStateOf(InsertKategoriUiState())
         private set
 
@@ -45,6 +47,18 @@ class UpdateKategoriViewModel(
 
     // Update the penerbit information
     fun updateKategori(id_kategori: Int, kategori: Kategori) {
+
+        val uiEvent = kategoriuiState.value.insertKategoriUiEvent
+        // Validation
+        if (uiEvent.nama_kategori.isEmpty()) {
+            errorMessage = "Nama Kategori tidak boleh kosong"
+            return
+        }
+        if (uiEvent.deskripsi_kategori.isEmpty()) {
+            errorMessage = "Alamat tidak boleh kosong"
+            return
+        }
+
         viewModelScope.launch {
             try {
                 KTG.updateKategori(id_kategori = id_kategori, kategori)
