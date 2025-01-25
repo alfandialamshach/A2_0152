@@ -36,29 +36,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.R
 import com.example.perpustakaan.model.Penerbit
-import com.example.perpustakaan.model.Penulis
 import com.example.perpustakaan.ui.ViewModel.Penerbit.HomePenerbitUiState
 import com.example.perpustakaan.ui.ViewModel.Penerbit.HomePenerbitViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 
 
 object DestinasiHomePenerbit: DestinasiNavigasi {
   override  val route ="home_Penerbit"
-  override  val titleRes = "Perpustakaan"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePenerbit(
     navigateToItemEntry:()->Unit,
+    onProfilClick: () -> Unit,
+    onHomeClick: () -> Unit = {},
+    onPenulisClick: () -> Unit,
+    onKategoriClick: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (Int) -> Unit ={},
     onUpdateTerbitClick: (Penerbit) -> Unit, // Menambahkan parameter untuk update
@@ -71,8 +75,8 @@ fun HomePenerbit(
         topBar = {
             CustomTopAppBar(
                 judul = "Penerbit",
-                onKategoriClick = {},
-                onPenulisClick = {},
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
                 onPenerbitClick = {},
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
@@ -80,18 +84,19 @@ fun HomePenerbit(
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
                 isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
                 isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToItemEntry,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Buku")
-            }
+
+        bottomBar = {
+            CustomBottomAppBar(
+                isBackEnabled =false,
+                onHomeClick = onHomeClick,
+                onProfileClick = onProfilClick,
+                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
+                onBackClick = { } // Handle Back click action
+            )
         },
     ) { innerPadding->
         HomeStatus(
@@ -239,6 +244,15 @@ fun BukuCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(
+                    text = penerbit.id_penerbit.toString(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp // Jika ingin lebih besar
+                    )
+                )
+
+
 
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = {onDeleteClick(penerbit)}) {
@@ -249,7 +263,6 @@ fun BukuCard(
                     )
                 }
 
-
                 // Tombol Update
                 IconButton(onClick = { onUpdateTerbitClick(penerbit) }) {
                     Icon(
@@ -259,15 +272,21 @@ fun BukuCard(
                     )
                 }
             }
-
             Text(
                 text = penerbit.nama_penerbit,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold, // Membuat teks tebal
+                    fontSize = 20.sp // Menyesuaikan ukuran teks
+                )
             )
             Text(
-                text = penerbit.id_penerbit.toString(),
-                style = MaterialTheme.typography.bodyMedium
+                text = penerbit.telepon_penerbit,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Normal, // Tetap normal (tidak bold)
+                    fontSize = 18.sp // Ukuran sedikit lebih kecil untuk perbedaan visual
+                )
             )
+
         }
     }
 }
