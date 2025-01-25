@@ -41,7 +41,6 @@ object DestinasiDetailKategori : DestinasiNavigasi {
     override val route = "detailKtg"
     const val ID_Kategori = "id_kategori"
     val routesWithArg = "$route/{$ID_Kategori}"
-    override val titleRes = "Detail Kategori"
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
