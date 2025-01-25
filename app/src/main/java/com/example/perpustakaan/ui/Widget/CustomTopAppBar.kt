@@ -88,7 +88,8 @@ fun CustomTopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween // Menambahkan jarak antar elemen: kiri, tengah, kanan
         ) {
             // Tombol menu dropdown, tampilkan hanya jika isMenuEnabled = true
             if (isMenuEnabled) {
@@ -108,7 +109,7 @@ fun CustomTopAppBar(
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false }
                 ) {
-                    if (isKategoriEnabled) { // Tampilkan item "Dosen" hanya jika isDosenEnabled = true
+                    if (isKategoriEnabled) { // Tampilkan item "Kategori" hanya jika isKategoriEnabled = true
                         DropdownMenuItem(
                             text = { Text("Kategori") },
                             onClick = {
@@ -117,7 +118,7 @@ fun CustomTopAppBar(
                             }
                         )
                     }
-                    if (isKategoriEnabled) { // Tampilkan item "Mata Kuliah" hanya jika isMataKuliahEnabled = true
+                    if (isPenulisEnabled) { // Tampilkan item "Penulis" hanya jika isPenulisEnabled = true
                         DropdownMenuItem(
                             text = { Text("Penulis") },
                             onClick = {
@@ -127,7 +128,7 @@ fun CustomTopAppBar(
                         )
                     }
 
-                    if (isPenerbitEnabled) { // Tampilkan item "Mata Kuliah" hanya jika isMataKuliahEnabled = true
+                    if (isPenerbitEnabled) { // Tampilkan item "Penerbit" hanya jika isPenerbitEnabled = true
                         DropdownMenuItem(
                             text = { Text("Penerbit") },
                             onClick = {
@@ -139,16 +140,16 @@ fun CustomTopAppBar(
                 }
             }
 
-            // Menambahkan Spacer agar judul berada di tengah
-            Spacer(modifier = Modifier.weight(1f))
+            // Menambahkan Spacer agar ada jarak antara Icon dan judul
+            Spacer(modifier = Modifier.width(16.dp)) // Memberikan jarak antara menu dan judul
 
             // Judul halaman
             Text(
                 text = judul,
                 color = Color.White,
-                fontSize = 20.sp,
+                fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(4f) // Membuat judul lebih dominan dan memusatkan
+                modifier = Modifier.padding(start = 8.dp, end = 45.dp) // Memberikan sedikit jarak di kiri dan kanan judul
             )
 
             // Tombol refresh berada di kanan
