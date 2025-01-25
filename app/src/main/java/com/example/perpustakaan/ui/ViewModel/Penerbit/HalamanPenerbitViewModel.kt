@@ -8,8 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.network.HttpException
-import com.example.perpustakaan.model.Penulis
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiEvent
 import kotlinx.coroutines.launch
 import java.io.IOException
 
