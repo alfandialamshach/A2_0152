@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,12 +21,15 @@ import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.ui.ViewModel.Buku.DetailBukuViewModel
 import com.example.perpustakaan.ui.ViewModel.Buku.InsertBukuUiEvent
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
+import com.example.perpustakaan.ui.Widget.CustomTopAppBar
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object DestinasiDetail : DestinasiNavigasi {
     override val route = "detail"
     const val ID_BUKU = "id_buku"
     val routesWithArg = "$route/{$ID_BUKU}"
-    override val titleRes = "Detail Buku"
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,21 +38,31 @@ fun DetailBukuView(
     modifier: Modifier = Modifier,
     viewModel: DetailBukuViewModel = viewModel(factory = PenyediaViewModel.Factory),
     onEditClick: (Int) -> Unit = {},
-    navigateBack: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
+    onKategoriClick: () -> Unit,
+    onProfilClick: () -> Unit,
+    onAddClick: () -> Unit,
+    onHomeClick: () -> Unit = {},
     onItemClick: (String) -> Unit // Menambahkan parameter onItemClick
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                title = { Text("Detail Buku") },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
+            CustomTopAppBar(
+                judul = "Detail Buku",
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
+                scrollBehavior = scrollBehavior,
+                onRefresh = {
+                    viewModel.ambilDetailBuku()
+                },
+                isMenuEnabled = true, // Menampilkan ikon menu
+                isKategoriEnabled = true, // Mengaktifkan menu Dosen
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
             )
         },
         floatingActionButton = {
@@ -63,7 +76,16 @@ fun DetailBukuView(
                     contentDescription = "Edit Buku"
                 )
             }
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isBackEnabled = false,
+                onHomeClick = onHomeClick,
+                onProfileClick = onProfilClick,
+                onAddDataClick = onAddClick, // Navigate to item entry when Add Data is clicked
+                onBackClick = {  } // Handle Back click action
+            )
+        },
     ) { innerPadding ->
         val bukuUiState by viewModel.bukuUiState
 
@@ -100,11 +122,16 @@ fun BodyDetailBuku(
         ItemDetailBuku(bukuUiEvent = bukuUiState)
     }
 }
-
 @Composable
 fun ItemDetailBuku(
     bukuUiEvent: InsertBukuUiEvent
 ) {
+    // Format tanggal menggunakan SimpleDateFormat
+    val simpleDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+    val formattedTanggalTerbit = bukuUiEvent.tanggal_terbit?.let {
+        simpleDateFormat.format(it)  // Format tanggal sesuai dengan lokal
+    } ?: "Tanggal tidak tersedia"
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -119,19 +146,14 @@ fun ItemDetailBuku(
             Spacer(modifier = Modifier.padding(4.dp))
             ComponentDetailBuku(judul = "Deskripsi Buku", isinya = bukuUiEvent.deskripsi_buku)
             Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailBuku(judul = "Tanggal Terbit", isinya = bukuUiEvent.tanggal_terbit)
+            // Menampilkan tanggal terbit yang sudah diformat
+            ComponentDetailBuku(judul = "Tanggal Terbit", isinya = formattedTanggalTerbit)
             Spacer(modifier = Modifier.padding(4.dp))
             ComponentDetailBuku(judul = "Status Buku", isinya = bukuUiEvent.status_buku)
             Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailBuku(judul = "ID Kategori", isinya = bukuUiEvent.id_kategori)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailBuku(judul = "ID Penulis", isinya = bukuUiEvent.id_penulis)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailBuku(judul = "ID Penerbit", isinya = bukuUiEvent.id_penerbit)
         }
     }
 }
-
 @Composable
 fun ComponentDetailBuku(
     judul: String,
@@ -174,6 +196,7 @@ fun PilihanKategoriPenulisPenerbit(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
         )
+
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             // Menambahkan clickable pada kategori dengan efek timbul
