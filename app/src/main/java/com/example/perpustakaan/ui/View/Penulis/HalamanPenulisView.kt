@@ -1,6 +1,7 @@
 package com.example.perpustakaan.ui.View.Penulis
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,15 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,23 +33,29 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.R
 import com.example.perpustakaan.model.Penulis
 import com.example.perpustakaan.ui.ViewModel.Penulis.HomePenulisUiState
 import com.example.perpustakaan.ui.ViewModel.Penulis.HomePenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 
 object DestinasiHomePenulis : DestinasiNavigasi {
    override val route = "home Penulis"
-  override  val titleRes = "Home Penulis"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +63,10 @@ object DestinasiHomePenulis : DestinasiNavigasi {
 fun HomePenulis(
     navigateToItemEntry: () -> Unit,
     modifier: Modifier = Modifier,
+    onProfilClick: () -> Unit,
+    onHomeClick: () -> Unit = {},
+    onPenerbitClick: () -> Unit,
+    onKategoriClick: () -> Unit,
     onDetailClick: (Int) -> Unit = {},
     onUpdateClick: (Penulis) -> Unit = {}, // Menambahkan parameter untuk update
     viewModel: HomePenulisViewModel = viewModel(factory = PenyediaViewModel.Factory)
@@ -67,27 +78,28 @@ fun HomePenulis(
         topBar = {
             CustomTopAppBar(
                 judul = "Penulis",
-                onKategoriClick = {},
+                onKategoriClick = onKategoriClick,
                 onPenulisClick = {},
-                onPenerbitClick = {},
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
-
+                viewModel.getPenulis()
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
                 isKategoriEnabled = true, // Mengaktifkan menu Dosen
                 isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToItemEntry,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Penulis")
-            }
+
+        bottomBar = {
+            CustomBottomAppBar(
+                isBackEnabled =false,
+                onHomeClick = onHomeClick,
+                onProfileClick = onProfilClick,
+                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
+                onBackClick = { } // Handle Back click action
+            )
         },
     ) { innerPadding ->
         HomeStatus(
@@ -216,20 +228,27 @@ fun BukuCard(
     penulis: Penulis,
     modifier: Modifier = Modifier,
     onDeleteClick: (Penulis) -> Unit = {},
-    onUpdateClick: (Penulis) -> Unit = {}  // Menambahkan parameter untuk update
+    onUpdateClick: (Penulis) -> Unit = {},
+    deleteIconColor: Color = Color.Black, // Warna ikon delete (putih)
+    updateIconColor: Color = Color.Blue, // Warna ikon update (putih)
 ) {
+    // Card dengan gradasi dan efek bayangan
     Card(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-        )
+        modifier = modifier
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(Color(0xFFF1F1F1), Color(0xFFE0E0E0)), // Gradasi warna abu-abu terang ke gelap
+                    start = Offset(0f, 0f),
+                    end = Offset(0f, 1000f)
+                )
+            ),
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -237,45 +256,70 @@ fun BukuCard(
             ) {
                 Text(
                     text = penulis.id_penulis.toString(),
-                    style = MaterialTheme.typography.titleLarge
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp,
+
+                        )
+
                 )
 
                 Spacer(Modifier.weight(1f))
 
-                // Tombol Hapus
+                // Tombol Hapus dengan efek timbul
                 IconButton(onClick = { onDeleteClick(penulis) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = "Delete",
+                        tint = deleteIconColor,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(60.dp)
+                            .graphicsLayer {
+                                // Menambahkan efek timbul untuk ikon
+                                shadowElevation = 4.dp.toPx() // Elevasi bayangan
+                                shape = CircleShape
+                                clip = true
+                            }
                     )
                 }
 
-                // Tombol Update
+                // Tombol Update dengan efek timbul
                 IconButton(onClick = { onUpdateClick(penulis) }) {
                     Icon(
-                        imageVector = Icons.Default.Edit,  // Menambahkan icon Edit untuk tombol Update
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = updateIconColor,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .size(60.dp)
+                            .graphicsLayer {
+                                // Menambahkan efek timbul untuk ikon
+                                shadowElevation = 4.dp.toPx()
+                                shape = CircleShape
+                                clip = true
+                            }
                     )
                 }
             }
 
-            // Nama Penulis
+            // Nama Penulis dengan efek timbul
             Text(
                 text = penulis.nama_penulis,
-                style = MaterialTheme.typography.bodyMedium
+                style = TextStyle(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp,
+                    )
             )
-            // Nama Biografi
+
+            // Biografi penulis dengan sedikit transparansi dan efek timbul
             Text(
                 text = penulis.biografi,
-                style = MaterialTheme.typography.bodyMedium
+                style = TextStyle(
+                    fontSize = 18.sp,
+                )
             )
-            // Nama Biografi
-            Text(
-                text = penulis.kontak,
-                style = MaterialTheme.typography.bodyMedium
-            )
+
         }
     }
 }
