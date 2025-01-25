@@ -34,8 +34,7 @@ class InsertBukuViewModel(
         private set
     var isLoading by mutableStateOf(false) // Tambahan untuk loading state
         private set
-    var errorMessage by mutableStateOf<String?>(null) // Tambahan untuk error state
-        private set
+    var errorMessage by mutableStateOf("")
 
     init {
         // Memuat data kategori, penulis, dan penerbit
@@ -44,7 +43,6 @@ class InsertBukuViewModel(
 
     private fun loadInitialData() {
         isLoading = true
-        errorMessage = null
         viewModelScope.launch {
             try {
                 val kategoriResponse = kategori.getAllKategori()
@@ -67,7 +65,6 @@ class InsertBukuViewModel(
 
     fun insertBuku() {
         isLoading = true
-        errorMessage = null
         val uiEvent = bukuUiState.insertBukuUiEvent
         // Validation
         if (uiEvent.nama_buku.isEmpty()) {
