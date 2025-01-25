@@ -25,17 +25,14 @@ import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.ui.ViewModel.Kategori.InsertKategoriUiEvent
 import com.example.perpustakaan.ui.ViewModel.Kategori.InsertKategoriUiState
 import com.example.perpustakaan.ui.ViewModel.Kategori.InsertKategoriViewModel
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiEvent
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiState
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import kotlinx.coroutines.launch
 
 
 object DestinasiTambahKategori: DestinasiNavigasi {
     override  val route = "item_kategori"
-    override  val titleRes = "Tambah Kategori"
 
 }
 
@@ -43,6 +40,10 @@ object DestinasiTambahKategori: DestinasiNavigasi {
 @Composable
 fun TambahKategoriScreen(
     navigateBack:()->Unit,
+    onProfilClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: InsertKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
@@ -55,26 +56,37 @@ fun TambahKategoriScreen(
             CustomTopAppBar(
                 judul = "Tambah Kategori",
                 onKategoriClick = {},
-                onPenulisClick = {},
-                onPenerbitClick = {},
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
 
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
+                isKategoriEnabled = false, // Mengaktifkan menu Dosen
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
             )
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isHomeEnabled = false,
+                onProfileClick = onProfilClick,
+                onAddDataClick = {}, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick // Handle Back click action
+            )
+        },
     ) { innerPadding ->
         TambahBodyKategori(
             insertKategoriUiState = viewModel.kategoriuiState,
+            errorMessage = viewModel.errorMessage,
             onKategoriValueChange = viewModel::updateInsertKategoriState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertKategori()
-                    navigateBack()
+                    if (viewModel.errorMessage.isEmpty()) {
+                        navigateBack()
+                    }
                 }
             },
             modifier = Modifier
@@ -88,6 +100,7 @@ fun TambahKategoriScreen(
 @Composable
 fun TambahBodyKategori(
     insertKategoriUiState: InsertKategoriUiState,
+    errorMessage: String,
     onKategoriValueChange: (InsertKategoriUiEvent) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -101,6 +114,15 @@ fun TambahBodyKategori(
             onValueChange = onKategoriValueChange,
             modifier = Modifier.fillMaxWidth()
         )
+        // Display error message if any
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
         Button(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
@@ -133,14 +155,6 @@ fun FormInputKategori(
             singleLine = true
         )
 
-        OutlinedTextField(
-            value = insertKategoriUiEvent.id_kategori.toString(),
-            onValueChange = {onValueChange(insertKategoriUiEvent.copy(id_kategori = 0))},
-            label = { Text("Id Kategori") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
-        )
 
         OutlinedTextField(
             value = insertKategoriUiEvent.deskripsi_kategori,
