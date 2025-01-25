@@ -10,12 +10,15 @@ import com.example.perpustakaan.ui.ViewModel.Buku.DetailBukuViewModel
 import com.example.perpustakaan.ui.ViewModel.Buku.InsertBukuViewModel
 import com.example.perpustakaan.ui.ViewModel.Buku.UpdateBukuViewModel
 import com.example.perpustakaan.ui.ViewModel.Home.HomeViewModel
+import com.example.perpustakaan.ui.ViewModel.Kategori.DetailKategoriViewModel
 import com.example.perpustakaan.ui.ViewModel.Kategori.HomeKategoriViewModel
 import com.example.perpustakaan.ui.ViewModel.Kategori.InsertKategoriViewModel
 import com.example.perpustakaan.ui.ViewModel.Kategori.UpdateKategoriViewModel
+import com.example.perpustakaan.ui.ViewModel.Penerbit.DetailPenerbitViewModel
 import com.example.perpustakaan.ui.ViewModel.Penerbit.HomePenerbitViewModel
 import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitViewModel
 import com.example.perpustakaan.ui.ViewModel.Penerbit.UpdatePenerbitViewModel
+import com.example.perpustakaan.ui.ViewModel.Penulis.DetailPenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.Penulis.HomePenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.Penulis.UpdatePenulisViewModel
@@ -48,16 +51,19 @@ object PenyediaViewModel{
         initializer { HomeKategoriViewModel(AplikasiPerpustakaan().container.kategoriRepository) }
         initializer { InsertKategoriViewModel(AplikasiPerpustakaan().container.kategoriRepository) }
         initializer { UpdateKategoriViewModel(createSavedStateHandle(),AplikasiPerpustakaan().container.kategoriRepository) }
+        initializer { DetailKategoriViewModel(createSavedStateHandle(),AplikasiPerpustakaan().container.kategoriRepository) }
 
         //Penerbit
         initializer { HomePenerbitViewModel(AplikasiPerpustakaan().container.penerbitRepository) }
         initializer { InsertPenerbitViewModel(AplikasiPerpustakaan().container.penerbitRepository) }
         initializer { UpdatePenerbitViewModel(createSavedStateHandle(),AplikasiPerpustakaan().container.penerbitRepository) }
+        initializer { DetailPenerbitViewModel(createSavedStateHandle(),AplikasiPerpustakaan().container.penerbitRepository) }
 
         //Penulis
         initializer { HomePenulisViewModel(AplikasiPerpustakaan().container.penulisRepository) }
         initializer { InsertPenulisViewModel(AplikasiPerpustakaan().container.penulisRepository) }
         initializer { UpdatePenulisViewModel(createSavedStateHandle(),AplikasiPerpustakaan().container.penulisRepository) }
+        initializer { DetailPenulisViewModel(createSavedStateHandle(),AplikasiPerpustakaan().container.penulisRepository) }
     }
 
     fun CreationExtras.AplikasiPerpustakaan(): PerpustakaanApplication =
