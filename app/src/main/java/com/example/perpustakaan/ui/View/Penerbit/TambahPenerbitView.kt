@@ -21,22 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitUiEvent
 import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitUiState
 import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitViewModel
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiEvent
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiState
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import kotlinx.coroutines.launch
 
 
 object DestinasiTambahPenerbit: DestinasiNavigasi {
     override  val route = "item_penerbit"
-    override  val titleRes = "Entry Penerbit"
 
 }
 
@@ -45,6 +41,10 @@ object DestinasiTambahPenerbit: DestinasiNavigasi {
 fun TambahPenerbitScreen(
     navigateBack:()->Unit,
     modifier: Modifier = Modifier,
+    onProfilClick: () -> Unit,
+    onBackClick: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onKategoriClick: () -> Unit,
     viewModel: InsertPenerbitViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val coroutineScope = rememberCoroutineScope()
@@ -55,8 +55,8 @@ fun TambahPenerbitScreen(
         topBar = {
             CustomTopAppBar(
                 judul = "Tambah Penerbit",
-                onKategoriClick = {},
-                onPenulisClick = {},
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
                 onPenerbitClick = {},
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
@@ -64,18 +64,29 @@ fun TambahPenerbitScreen(
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
                 isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
                 isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
             )
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isHomeEnabled = false,
+                onProfileClick = onProfilClick,
+                onAddDataClick = {}, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick // Handle Back click action
+            )
+        },
     ) { innerPadding ->
         TambahBodyPenerbit(
             insertPenerbitUiState = viewModel.penerbituiState,
+            errorMessage = viewModel.errorMessage,
             onPenerbitValueChange = viewModel::updateInsertPenerbitState,
             onSaveClick = {
                 coroutineScope.launch {
                     viewModel.insertPenerbit()
-                    navigateBack()
+                    if (viewModel.errorMessage.isEmpty()) {
+                        navigateBack()
+                    }
                 }
             },
             modifier = Modifier
@@ -91,6 +102,7 @@ fun TambahBodyPenerbit(
     insertPenerbitUiState: InsertPenerbitUiState,
     onPenerbitValueChange: (InsertPenerbitUiEvent) -> Unit,
     onSaveClick: () -> Unit,
+    errorMessage: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -102,6 +114,15 @@ fun TambahBodyPenerbit(
             onValueChange = onPenerbitValueChange,
             modifier = Modifier.fillMaxWidth()
         )
+        // Display error message if any
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
         Button(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
@@ -129,15 +150,6 @@ fun FormInputPenerbit(
             value = insertPenerbitUiEvent.nama_penerbit,
             onValueChange = {onValueChange(insertPenerbitUiEvent.copy(nama_penerbit = it))},
             label = { Text("Nama") },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = enabled,
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            value = insertPenerbitUiEvent.id_penerbit.toString(),
-            onValueChange = {onValueChange(insertPenerbitUiEvent.copy(id_penerbit = 0))},
-            label = { Text("Id Penerbit") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
