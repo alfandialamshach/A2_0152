@@ -30,8 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
-import com.example.perpustakaan.ui.ViewModel.Penerbit.DetailPenerbitViewModel
-import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitUiEvent
 import com.example.perpustakaan.ui.ViewModel.Penulis.DetailPenulisViewModel
 import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiEvent
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
@@ -43,7 +41,6 @@ object DestinasiDetailPenulis : DestinasiNavigasi {
     override val route = "detailtulis"
     const val ID_Penulis = "id_penulis"
     val routesWithArg = "$route/{$ID_Penulis}"
-    override val titleRes = "Detail Penerbit"
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
