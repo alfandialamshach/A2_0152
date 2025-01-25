@@ -15,13 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,21 +33,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.R
 import com.example.perpustakaan.model.Buku
+import com.example.perpustakaan.model.Penerbit
 import com.example.perpustakaan.ui.ViewModel.Home.HomeUtamaUiState
 import com.example.perpustakaan.ui.ViewModel.Home.HomeViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 object DestinasiHome: DestinasiNavigasi {
     override val route ="home"
-   override val titleRes = "Perpustakaan"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,8 +61,11 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onDetailClick: (Int) -> Unit = {},
     onKategoriClick: () -> Unit,
+    onProfilClick: () -> Unit,
     onPenulisClick: () -> Unit,
     onPenerbitClick: () -> Unit,
+    onUpdateBukuClick: (Buku) -> Unit, // Menambahkan parameter untuk update
+
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -76,7 +81,7 @@ fun HomeScreen(
                 onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
-
+                viewModel.getBuku()
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
                 isKategoriEnabled = true, // Mengaktifkan menu Dosen
@@ -85,15 +90,15 @@ fun HomeScreen(
             )
 
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToItemEntry,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Buku")
-            }
-        }
+        bottomBar = {
+            CustomBottomAppBar(
+                isBackEnabled =false,
+                onHomeClick = { viewModel.getBuku()},
+                onProfileClick = onProfilClick,
+                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
+                onBackClick = { } // Handle Back click action
+            )
+        },
     ) { innerPadding ->
         // Konten utama halaman
         HomeStatus(
@@ -104,7 +109,8 @@ fun HomeScreen(
             onDeleteClick = {
                 viewModel.deleteBuku(it.id_buku)
                 viewModel.getBuku()
-            }
+            },
+            onUpdateBukuClick = onUpdateBukuClick
         )
     }
 }
@@ -116,7 +122,8 @@ fun HomeStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Buku) -> Unit = {},
-    onDetailClick: (Int) -> Unit
+    onDetailClick: (Int) -> Unit,
+    onUpdateBukuClick: (Buku) -> Unit = {}  // Menambahkan parameter untuk update
 ){
     when (homeUtamaUiState){
         is HomeUtamaUiState.Loading-> OnLoading(modifier = modifier.fillMaxSize())
@@ -134,7 +141,8 @@ fun HomeStatus(
                     },
                     onDeleteClick={
                         onDeleteClick(it)
-                    }
+                    },
+                    onUpdateBukuClick = onUpdateBukuClick
                 )
             }
         is HomeUtamaUiState.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
@@ -190,7 +198,8 @@ fun BukuList(
     buku: List<Buku>,
     modifier: Modifier = Modifier,
     onDetailClick:(Buku)->Unit,
-    onDeleteClick: (Buku) -> Unit = {}
+    onDeleteClick: (Buku) -> Unit = {},
+    onUpdateBukuClick: (Buku) -> Unit = {}  // Menambahkan parameter untuk update
 ){
     LazyColumn(
         modifier = modifier,
@@ -205,6 +214,9 @@ fun BukuList(
                     .clickable{onDetailClick(buku)},
                 onDeleteClick={
                     onDeleteClick(buku)
+                },
+                onUpdateBukuClick = {
+                    onUpdateBukuClick(buku)
                 }
             )
 
@@ -217,7 +229,8 @@ fun BukuList(
 fun BukuCard(
     buku: Buku,
     modifier: Modifier = Modifier,
-    onDeleteClick: (Buku) -> Unit = {}
+    onDeleteClick: (Buku) -> Unit = {},
+    onUpdateBukuClick: (Buku) -> Unit = {}  // Menambahkan parameter untuk update
 ) {
     // Format tanggal menggunakan SimpleDateFormat
     val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -242,7 +255,10 @@ fun BukuCard(
             ) {
                 Text(
                     text = buku.nama_buku,
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp // Jika ingin lebih besar
+                    )
                 )
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = { onDeleteClick(buku) }) {
@@ -252,16 +268,30 @@ fun BukuCard(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
+                // Tombol Update
+                IconButton(onClick = { onUpdateBukuClick(buku) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,  // Menambahkan icon Edit untuk tombol Update
+                        contentDescription = "Update",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
             // Tampilkan tanggal dengan format sederhana
             Text(
                 text = "Tanggal Terbit: $formattedDate",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp // Jika ingin lebih besar
+                )
             )
             Text(
                 text = buku.deskripsi_buku,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp // Jika ingin lebih besar
+                )
             )
         }
     }
