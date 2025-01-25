@@ -1,7 +1,9 @@
 package com.example.perpustakaan.ui.ViewModel.Penerbit
 
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +28,7 @@ class UpdatePenerbitViewModel(
     // Retrieve the id penulis from SavedStateHandle
     val id_penerbit: Int = checkNotNull(savedStateHandle[DestinasiUpdateTerbit.ID_Penerbit])
 
-
+    var errorMessage by mutableStateOf("")
     var penerbituiState = mutableStateOf(InsertPenerbitUiState())
         private set
 
@@ -51,6 +53,22 @@ class UpdatePenerbitViewModel(
 
     // Update the penerbit information
     fun updatePenerbit(id_penerbit: Int, penerbit: Penerbit) {
+        val uiEvent = penerbituiState.value.insertPenerbitUiEvent
+        // Validation
+        if (uiEvent.nama_penerbit.isEmpty()) {
+            errorMessage = "Nama penerbit tidak boleh kosong"
+            return
+        }
+        if (uiEvent.alamat_penerbit.isEmpty()) {
+            errorMessage = "Alamat tidak boleh kosong"
+            return
+        }
+
+        if (uiEvent.telepon_penerbit.isEmpty() || !isValidPhoneNumber(uiEvent.telepon_penerbit)) {
+            errorMessage = "Nomor telepon harus berupa angka dan format yang valid"
+            return
+        }
+
         viewModelScope.launch {
             try {
                 terbit.updatePenerbit(id_penerbit = id_penerbit, penerbit)
@@ -61,6 +79,11 @@ class UpdatePenerbitViewModel(
                 e.printStackTrace()
             }
         }
+    }
+    private fun isValidPhoneNumber(phone: String): Boolean {
+        // Regex untuk validasi nomor telepon (hanya angka, 10-15 digit)
+        val regex = Regex("^\\d{10,15}$")
+        return regex.matches(phone)
     }
 
     // Update the UI state with a new InsertUiEvent
