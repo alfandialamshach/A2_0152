@@ -13,12 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
-import com.example.perpustakaan.model.Buku
 import com.example.perpustakaan.ui.ViewModel.Buku.UpdateBukuViewModel
 import com.example.perpustakaan.ui.ViewModel.Buku.toBuku
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import kotlinx.coroutines.launch
 
@@ -26,7 +25,6 @@ object DestinasiUpdateBuku : DestinasiNavigasi {
     override val route = "update_buku"
     const val ID_Buku = "id_buku" // Key for the argument
     val routesWithArg = "$route/{$ID_Buku}" // Argument placeholder in the route
-    override val titleRes = "Update Buku"
 }
 
 
@@ -34,6 +32,12 @@ object DestinasiUpdateBuku : DestinasiNavigasi {
 @Composable
 fun UpdateBukuView(
     navigateBack: () -> Unit,
+    onProfilClick: () -> Unit,
+    onAddClick: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
+    onKategoriClick: () -> Unit,
+    onBackClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: UpdateBukuViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
@@ -51,17 +55,26 @@ fun UpdateBukuView(
         topBar = {
             CustomTopAppBar(
                 judul = "Edit Buku",
-                onKategoriClick = {},
-                onPenulisClick = {},
-                onPenerbitClick = {},
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {},
                 isMenuEnabled = true, // Menampilkan ikon menu
                 isKategoriEnabled = true, // Mengaktifkan menu kategori
-                isPenulisEnabled = false, // Menonaktifkan menu penulis
+                isPenulisEnabled = true, // Menonaktifkan menu penulis
                 isPenerbitEnabled = false // Menonaktifkan menu penerbit
             )
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isHomeEnabled = false,
+                onHomeClick = {},
+                onProfileClick = onProfilClick,
+                onAddDataClick = onAddClick, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick// Handle Back click action
+            )
+        },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -75,6 +88,7 @@ fun UpdateBukuView(
                 kategoriList = kategoriList,
                 penulisList = penulisList,
                 penerbitList = penerbitList,
+                errorMessage = viewModel.errorMessage,
                 onBukuValueChange = { updatedValue ->
                     viewModel.updateBukuState(updatedValue) // Update state ViewModel
                 },
