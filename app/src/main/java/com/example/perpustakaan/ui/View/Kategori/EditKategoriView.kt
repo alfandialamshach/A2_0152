@@ -15,14 +15,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
-import com.example.perpustakaan.ui.View.Penulis.TambahBodyPenulis
 import com.example.perpustakaan.ui.ViewModel.Kategori.UpdateKategoriViewModel
 import com.example.perpustakaan.ui.ViewModel.Kategori.toKategori
-import com.example.perpustakaan.ui.ViewModel.Penerbit.UpdatePenerbitViewModel
-import com.example.perpustakaan.ui.ViewModel.Penerbit.toPenerbit
-import com.example.perpustakaan.ui.ViewModel.Penulis.UpdatePenulisViewModel
-import com.example.perpustakaan.ui.ViewModel.Penulis.toPenulis
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import kotlinx.coroutines.launch
 
@@ -31,7 +27,6 @@ object DestinasiUpdateKategori : DestinasiNavigasi {
     override val route = "update_kategori"
     const val ID_Kategori = "id_kategori" // Key for the argument
     val routesWithArg = "$route/{$ID_Kategori}"// Argument placeholder in the route
-    override val titleRes = "Update Kategori"
 }
 
 
@@ -39,6 +34,11 @@ object DestinasiUpdateKategori : DestinasiNavigasi {
 @Composable
 fun UpdateKategoriView(
     navigateBack: () -> Unit,
+    onProfilClick: () -> Unit,
+    onAddClick: () -> Unit,
+    onBackClick: () -> Unit = {},
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UpdateKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
@@ -55,18 +55,27 @@ fun UpdateKategoriView(
             CustomTopAppBar(
                 judul = "Edit Kategori",
                 onKategoriClick = {},
-                onPenulisClick = {},
-                onPenerbitClick = {},
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
 
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
+                isKategoriEnabled = false, // Mengaktifkan menu Dosen
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
             )
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isHomeEnabled = false,
+                onHomeClick = {},
+                onProfileClick = onProfilClick,
+                onAddDataClick = onAddClick, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick// Handle Back click action
+            )
+        },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -77,6 +86,7 @@ fun UpdateKategoriView(
             // Pass the UI state to the EntryBody
             TambahBodyKategori(
                 insertKategoriUiState = kategoriuiState,
+                errorMessage = viewModel.errorMessage,
                 onKategoriValueChange = { updatedkValue ->
                     viewModel.updateKategoriState(updatedkValue) // Update ViewModel state
                 },
