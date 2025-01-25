@@ -13,12 +13,10 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
-import com.example.perpustakaan.ui.View.Penulis.TambahBodyPenulis
 import com.example.perpustakaan.ui.ViewModel.Penerbit.UpdatePenerbitViewModel
 import com.example.perpustakaan.ui.ViewModel.Penerbit.toPenerbit
-import com.example.perpustakaan.ui.ViewModel.Penulis.UpdatePenulisViewModel
-import com.example.perpustakaan.ui.ViewModel.Penulis.toPenulis
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 import kotlinx.coroutines.launch
 
@@ -27,14 +25,17 @@ object DestinasiUpdateTerbit : DestinasiNavigasi {
     override val route = "update_penerbit"
     const val ID_Penerbit = "id_penerbit" // Key for the argument
     val routesWithArg = "$route/{$ID_Penerbit}"// Argument placeholder in the route
-    override val titleRes = "Update Penerbit"
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateTerbitView(
-
+    onProfilClick: () -> Unit,
+    onAddClick: () -> Unit,
+    onBackClick: () -> Unit = {},
+    onPenulisClick: () -> Unit,
+    onKategoriClick: () -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UpdatePenerbitViewModel = viewModel(factory = PenyediaViewModel.Factory)
@@ -51,8 +52,8 @@ fun UpdateTerbitView(
         topBar = {
             CustomTopAppBar(
                 judul = "Edit Penerbit",
-                onKategoriClick = {},
-                onPenulisClick = {},
+                onKategoriClick = onKategoriClick,
+                onPenulisClick = onPenulisClick,
                 onPenerbitClick = {},
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
@@ -60,10 +61,19 @@ fun UpdateTerbitView(
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
                 isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
+                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
                 isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
             )
-        }
+        },
+        bottomBar = {
+            CustomBottomAppBar(
+                isHomeEnabled = false,
+                onHomeClick = {},
+                onProfileClick = onProfilClick,
+                onAddDataClick = onAddClick, // Navigate to item entry when Add Data is clicked
+                onBackClick = onBackClick// Handle Back click action
+            )
+        },
     ) { padding ->
         Column(
             modifier = Modifier
@@ -74,6 +84,7 @@ fun UpdateTerbitView(
             // Pass the UI state to the EntryBody
             TambahBodyPenerbit(
                 insertPenerbitUiState = penerbituiState,
+                errorMessage = viewModel.errorMessage,
                 onPenerbitValueChange = { updatedpValue ->
                     viewModel.updatePenerbitState(updatedpValue) // Update ViewModel state
                 },
