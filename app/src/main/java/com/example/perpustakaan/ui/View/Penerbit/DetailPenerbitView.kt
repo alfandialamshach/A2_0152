@@ -40,7 +40,6 @@ object DestinasiDetailPenerbit : DestinasiNavigasi {
     override val route = "detailpnr"
     const val ID_Penerbit = "id_penerbit"
     val routesWithArg = "$route/{$ID_Penerbit}"
-    override val titleRes = "Detail Penerbit"
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
