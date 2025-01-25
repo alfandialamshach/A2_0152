@@ -15,14 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,26 +33,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.perpustakaan.Navigasi.DestinasiNavigasi
 import com.example.perpustakaan.R
-import com.example.perpustakaan.model.Buku
 import com.example.perpustakaan.model.Kategori
-import com.example.perpustakaan.model.Penerbit
-import com.example.perpustakaan.ui.ViewModel.Home.HomeUtamaUiState
-import com.example.perpustakaan.ui.ViewModel.Home.HomeViewModel
 import com.example.perpustakaan.ui.ViewModel.Kategori.HomeKategoriUiState
 import com.example.perpustakaan.ui.ViewModel.Kategori.HomeKategoriViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 
 
 object DestinasiHomeKategori: DestinasiNavigasi {
-    override val route = "home_kategori" // Menggunakan garis bawah sebagai pengganti spasi
-    override val titleRes = "Perpustakaan"
+    override val route = "home_kategori"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,6 +57,10 @@ fun HomeKategori(
     navigateToItemEntry:()->Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (Int) -> Unit ={},
+    onProfilClick: () -> Unit,
+    onPenulisClick: () -> Unit,
+    onPenerbitClick: () -> Unit,
+    onHomeClick: () -> Unit = {},
     onUpdateKategoriClick: (Kategori) -> Unit, // Menambahkan parameter untuk update
     viewModel: HomeKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
@@ -74,32 +72,33 @@ fun HomeKategori(
             CustomTopAppBar(
                 judul = "Kategori",
                 onKategoriClick = {},
-                onPenulisClick = {},
-                onPenerbitClick = {},
+                onPenulisClick = onPenulisClick,
+                onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
-                onRefresh = {
+                onRefresh = { viewModel.getKategori()
 
                 },
                 isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = false, // Mengaktifkan menu Dosen
                 isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
+                isPenerbitEnabled = true, // Menonaktifkan menu Mata Kuliah
+                isKategoriEnabled = false, // Mengaktifkan menu Dosen
             )
         },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToItemEntry,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp)
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Buku")
-            }
+        bottomBar = {
+            CustomBottomAppBar(
+                isBackEnabled =false,
+                onHomeClick = onHomeClick,
+                onProfileClick = onProfilClick,
+                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
+                onBackClick = { } // Handle Back click action
+            )
         },
     ) { innerPadding->
         HomeStatus(
             homeKategoriUiState = viewModel.kategoriUIState,
             retryAction = {viewModel.getKategori()}, modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick,onDeleteClick = {
+            onDetailClick = onDetailClick,
+            onDeleteClick = {
                 viewModel.deleteBuku(it.id_kategori)
                 viewModel.getKategori()
             },
@@ -241,11 +240,15 @@ fun BukuCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = kategori.nama_kategori,
-                    style = MaterialTheme.typography.titleLarge
+                    text = kategori.id_kategori.toString(),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp // Jika ingin lebih besar
+                    )
                 )
+
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {onDeleteClick(kategori)}) {
+                IconButton(onClick = { onDeleteClick(kategori) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
@@ -261,11 +264,11 @@ fun BukuCard(
                     )
                 }
             }
-
             Text(
-                text = kategori.deskripsi_kategori,
-                style = MaterialTheme.typography.bodyMedium
+                text = kategori.nama_kategori,
+                style = MaterialTheme.typography.titleLarge
             )
+
         }
     }
 }
