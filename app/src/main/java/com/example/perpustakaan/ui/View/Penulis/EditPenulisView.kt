@@ -84,7 +84,6 @@ fun UpdateView(
             // Pass the UI state to the EntryBody
             TambahBodyPenulis(
                 insertPenulisUiState = uiState,
-
                 errorMessage = viewModel.errorMessage,
                 onPenulisValueChange = { updatedValue ->
                     viewModel.updatePenulisState(updatedValue) // Update ViewModel state
@@ -99,7 +98,9 @@ fun UpdateView(
 
                             )
                             viewModel.ambilPenulis()
-                            navigateBack() // Navigate back after saving
+                            if (viewModel.errorMessage.isEmpty()) {
+                                navigateBack()
+                            }
                         }
                     }
                 }
