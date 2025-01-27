@@ -149,7 +149,7 @@ fun FormInputKategori(
         OutlinedTextField(
             value = insertKategoriUiEvent.nama_kategori,
             onValueChange = {onValueChange(insertKategoriUiEvent.copy(nama_kategori = it))},
-            label = { Text("Nama") },
+            label = { Text("Nama Kategori") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
