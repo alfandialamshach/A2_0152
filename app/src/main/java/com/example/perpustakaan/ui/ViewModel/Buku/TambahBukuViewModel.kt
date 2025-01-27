@@ -66,6 +66,7 @@ class InsertBukuViewModel(
     fun insertBuku() {
         isLoading = true
         val uiEvent = bukuUiState.insertBukuUiEvent
+        errorMessage = ""
         // Validation
         if (uiEvent.nama_buku.isEmpty()) {
             errorMessage = "Nama Buku tidak boleh kosong"
@@ -79,6 +80,19 @@ class InsertBukuViewModel(
             errorMessage = "Status Buku tidak boleh kosong"
             return
         }
+        if (uiEvent.id_kategori == 0 || !isValidKategori(uiEvent.id_kategori)) {
+            errorMessage = "ID Kategori tidak valid"
+            return
+        }
+        if (uiEvent.id_penulis == 0 || !isValidPenulis(uiEvent.id_penulis)) {
+            errorMessage = "ID Penulis tidak valid"
+            return
+        }
+        if (uiEvent.id_penerbit == 0 || !isValidPenerbit(uiEvent.id_penerbit)) {
+            errorMessage = "ID Penerbit tidak valid"
+            return
+        }
+
 
         viewModelScope.launch {
             try {
@@ -92,6 +106,19 @@ class InsertBukuViewModel(
                 isLoading = false
             }
         }
+    }
+    // Function to check if id_kategori exists in the available categories
+    fun isValidKategori(id_kategori: Int): Boolean {
+        // Check if the id_kategori exists in kategoriList
+        return kategoriList.any { it.id_kategori == id_kategori }
+    }
+    fun isValidPenulis(id_penulis: Int): Boolean {
+        // Check if the id_kategori exists in kategoriList
+        return penulisList.any { it.id_penulis == id_penulis }
+    }
+    fun isValidPenerbit(id_penerbit: Int): Boolean {
+        // Check if the id_kategori exists in kategoriList
+        return penerbitList.any { it.id_penerbit == id_penerbit }
     }
 
 }
