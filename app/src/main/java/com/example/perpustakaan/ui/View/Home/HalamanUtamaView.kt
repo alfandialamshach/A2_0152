@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +29,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -65,11 +70,12 @@ fun HomeScreen(
     onPenulisClick: () -> Unit,
     onPenerbitClick: () -> Unit,
     onUpdateBukuClick: (Buku) -> Unit, // Menambahkan parameter untuk update
-
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    // Variabel untuk mengatur status dialog konfirmasi
+    var isDialogVisible by remember { mutableStateOf(false) }
+    var bukuToDelete by remember { mutableStateOf<Buku?>(null) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -80,37 +86,65 @@ fun HomeScreen(
                 onPenulisClick = onPenulisClick,
                 onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
-                onRefresh = {
-                viewModel.getBuku()
-                },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
+                onRefresh = { viewModel.getBuku() },
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = true,
+                isPenerbitEnabled = true
             )
-
         },
         bottomBar = {
             CustomBottomAppBar(
-                isBackEnabled =false,
-                onHomeClick = { viewModel.getBuku()},
+                isBackEnabled = false,
+                onHomeClick = { viewModel.getBuku() },
                 onProfileClick = onProfilClick,
-                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
-                onBackClick = { } // Handle Back click action
+                onAddDataClick = navigateToItemEntry,
+                onBackClick = { }
             )
-        },
+        }
     ) { innerPadding ->
-        // Konten utama halaman
         HomeStatus(
             homeUtamaUiState = viewModel.bukuUIState,
             retryAction = { viewModel.getBuku() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
-            onDeleteClick = {
-                viewModel.deleteBuku(it.id_buku)
-                viewModel.getBuku()
+            onDeleteClick = { buku ->
+                // Tampilkan dialog konfirmasi sebelum menghapus
+                bukuToDelete = buku
+                isDialogVisible = true
             },
             onUpdateBukuClick = onUpdateBukuClick
+        )
+    }
+
+    // Dialog konfirmasi sebelum menghapus buku
+    if (isDialogVisible && bukuToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { isDialogVisible = false },
+            title = {
+                Text(text = "Konfirmasi Hapus")
+            },
+            text = {
+                Text(text = "Apakah Anda yakin ingin menghapus buku '${bukuToDelete?.nama_buku}'?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        bukuToDelete?.let {
+                            viewModel.deleteBuku(it.id_buku)
+                            viewModel.getBuku()
+                        }
+                        isDialogVisible = false
+                    }
+                ) {
+                    Text("Ya")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { isDialogVisible = false }) {
+                    Text("Tidak")
+                }
+            }
         )
     }
 }
