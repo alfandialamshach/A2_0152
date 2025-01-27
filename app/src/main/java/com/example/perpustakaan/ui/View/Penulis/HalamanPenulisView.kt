@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +32,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -59,6 +62,7 @@ object DestinasiHomePenulis : DestinasiNavigasi {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun HomePenulis(
     navigateToItemEntry: () -> Unit,
@@ -68,10 +72,12 @@ fun HomePenulis(
     onPenerbitClick: () -> Unit,
     onKategoriClick: () -> Unit,
     onDetailClick: (Int) -> Unit = {},
-    onUpdateClick: (Penulis) -> Unit = {}, // Menambahkan parameter untuk update
+    onUpdateClick: (Penulis) -> Unit = {},
     viewModel: HomePenulisViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val (showDeleteDialog, setShowDeleteDialog) = remember { mutableStateOf(false) }
+    val selectedPenulis = remember { mutableStateOf<Penulis?>(null) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -83,22 +89,21 @@ fun HomePenulis(
                 onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
-                viewModel.getPenulis()
+                    viewModel.getPenulis()
                 },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = false,
+                isPenerbitEnabled = true
             )
         },
-
         bottomBar = {
             CustomBottomAppBar(
-                isBackEnabled =false,
+                isBackEnabled = false,
                 onHomeClick = onHomeClick,
                 onProfileClick = onProfilClick,
-                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
-                onBackClick = { } // Handle Back click action
+                onAddDataClick = navigateToItemEntry,
+                onBackClick = {}
             )
         },
     ) { innerPadding ->
@@ -107,15 +112,40 @@ fun HomePenulis(
             retryAction = { viewModel.getPenulis() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
-            onDeleteClick = {
-                viewModel.deletePenulis(it.id_penulis)
-                viewModel.getPenulis()
+            onDeleteClick = { penulis ->
+                selectedPenulis.value = penulis
+                setShowDeleteDialog(true)  // Menampilkan dialog konfirmasi
             },
-            onUpdateClick = onUpdateClick// Menggunakan fungsi update
+            onUpdateClick = onUpdateClick
+        )
+    }
 
+    // Konfirmasi Penghapusan
+    if (showDeleteDialog && selectedPenulis.value != null) {
+        AlertDialog(
+            onDismissRequest = { setShowDeleteDialog(false) },
+            title = { Text(text = "Konfirmasi Penghapusan") },
+            text = { Text("Apakah Anda yakin ingin menghapus penulis ini?") },
+            confirmButton = {
+                Button(onClick = {
+                    selectedPenulis.value?.let {
+                        viewModel.deletePenulis(it.id_penulis)
+                        viewModel.getPenulis()
+                    }
+                    setShowDeleteDialog(false)
+                }) {
+                    Text("Hapus")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { setShowDeleteDialog(false) }) {
+                    Text("Batal")
+                }
+            }
         )
     }
 }
+
 
 @Composable
 fun HomeStatus(
