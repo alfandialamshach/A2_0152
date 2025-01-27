@@ -1,25 +1,21 @@
 package com.example.perpustakaan.ui.Widget
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomBottomAppBar(
     onHomeClick: () -> Unit = {},
@@ -32,75 +28,69 @@ fun CustomBottomAppBar(
     isProfileEnabled: Boolean = true, // Enable/Disable Profile icon
     modifier: Modifier = Modifier
 ) {
-    BottomAppBar(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.primaryContainer),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        tonalElevation = 4.dp
-    ) {
-        // Back Button
-        if (isBackEnabled) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+    Box(modifier = modifier) {
+        BottomAppBar(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.primary),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            tonalElevation = 8.dp
+        ) {
+            // Conditional rendering based on Home and Back button states
+            if (isHomeEnabled) {
+                // Home Button (di sisi paling kiri jika Home diaktifkan)
+                IconButton(onClick = onHomeClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Home,
+                        contentDescription = "Home",
+                        tint = Color(0xFF1976D2),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            } else if (isBackEnabled) {
+                // Back Button (di sisi paling kiri jika Home tidak aktif)
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color(0xFF1976D2),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            } else {
+                Spacer(modifier = Modifier.size(48.dp)) // Placeholder
+            }
+
+            Spacer(modifier = Modifier.weight(1f)) // This keeps the Profile button aligned to the right
+
+            // Profile Button (di sisi kanan)
+            if (isProfileEnabled) {
+                IconButton(onClick = onProfileClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Person,
+                        contentDescription = "Profile",
+                        tint = Color(0xFF1976D2),
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
             }
         }
 
-        // Spacer to adjust layout when Back button is hidden
-        if (isBackEnabled) {
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-        // Home Button
-        if (isHomeEnabled) {
-            IconButton(onClick = onHomeClick) {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Home",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-        }
-
-        // Spacer to adjust layout when Home button is hidden
-        if (isHomeEnabled) {
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-//
-
-        // Add Data Button
+        // Floating Action Button (FAB) for Add Data (di tengah)
         if (isAddDataEnabled) {
-            IconButton(
+            FloatingActionButton(
                 onClick = onAddDataClick,
+                containerColor = Color(0xFF1976D2), // Set container color to blue
+                contentColor = Color.White, // Set content color (icon) to white
                 modifier = Modifier
-                    .size(72.dp) // Ukuran tombol (default IconButton adalah 48.dp)
+                    .align(Alignment.TopCenter)
+                    .offset(y = -28.dp) // Adjust FAB position
+                    .size(72.dp) // Ukuran FAB sesuai kebutuhan
+                    .clip(CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add Data",
-                    modifier = Modifier.size(48.dp), // Ukuran ikon di dalam tombol
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-        }
-
-// Spacer to adjust layout when Add Data button is hidden
-        if (isAddDataEnabled) {
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-
-        // Profile Button
-        if (isProfileEnabled) {
-            IconButton(onClick = onProfileClick) {
-                Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "Profile",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = Color.White
                 )
             }
         }
