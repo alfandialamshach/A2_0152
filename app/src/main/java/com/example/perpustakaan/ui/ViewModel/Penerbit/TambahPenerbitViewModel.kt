@@ -21,7 +21,7 @@ class InsertPenerbitViewModel(private val penerbit: PenerbitRepository) : ViewMo
     suspend fun insertPenerbit() {
 
         val uiEvent = penerbituiState.insertPenerbitUiEvent
-
+        errorMessage = ""
         // Validation
         if (uiEvent.nama_penerbit.isEmpty()) {
             errorMessage = "Nama penerbit tidak boleh kosong"
