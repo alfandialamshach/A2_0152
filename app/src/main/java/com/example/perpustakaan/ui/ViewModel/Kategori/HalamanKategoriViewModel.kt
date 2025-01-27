@@ -6,15 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.network.HttpException
-import com.example.perpustakaan.Repository.BukuRepository
 import com.example.perpustakaan.Repository.KategoriRepository
-import com.example.perpustakaan.model.Buku
 import com.example.perpustakaan.model.Kategori
-import com.example.perpustakaan.model.Penerbit
-import com.example.perpustakaan.model.Penulis
 import com.example.perpustakaan.ui.ViewModel.Home.HomeUtamaUiState
-import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitUiEvent
-import com.example.perpustakaan.ui.ViewModel.Penulis.InsertPenulisUiEvent
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -44,7 +38,7 @@ class HomeKategoriViewModel (private val kategori: KategoriRepository) : ViewMod
         }
     }
 
-    fun deleteBuku(id_kategori : Int){
+    fun deleteKategori(id_kategori : Int){
         viewModelScope.launch {
             try {
                 kategori.deleteKategori(id_kategori)
