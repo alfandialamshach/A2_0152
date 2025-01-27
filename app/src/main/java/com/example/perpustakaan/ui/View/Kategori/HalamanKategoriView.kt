@@ -45,7 +45,10 @@ import com.example.perpustakaan.ui.ViewModel.Kategori.HomeKategoriViewModel
 import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
 import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
-
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 object DestinasiHomeKategori: DestinasiNavigasi {
     override val route = "home_kategori"
@@ -65,6 +68,9 @@ fun HomeKategori(
     viewModel: HomeKategoriViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    // State untuk dialog konfirmasi
+    val showDialog = remember { mutableStateOf(false) }
+    val selectedKategori = remember { mutableStateOf<Kategori?>(null) }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -75,13 +81,11 @@ fun HomeKategori(
                 onPenulisClick = onPenulisClick,
                 onPenerbitClick = onPenerbitClick,
                 scrollBehavior = scrollBehavior,
-                onRefresh = { viewModel.getKategori()
-
-                },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isKategoriEnabled = false, // Mengaktifkan menu Dosen
+                onRefresh = { viewModel.getKategori() },
+                isMenuEnabled = true,
+                isPenulisEnabled = true,
+                isPenerbitEnabled = true,
+                isKategoriEnabled = false,
             )
         },
         bottomBar = {
@@ -93,19 +97,48 @@ fun HomeKategori(
                 onBackClick = { } // Handle Back click action
             )
         },
-    ) { innerPadding->
+    ) { innerPadding ->
         HomeStatus(
             homeKategoriUiState = viewModel.kategoriUIState,
-            retryAction = {viewModel.getKategori()}, modifier = Modifier.padding(innerPadding),
+            retryAction = { viewModel.getKategori() },
+            modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
-            onDeleteClick = {
-                viewModel.deleteBuku(it.id_kategori)
-                viewModel.getKategori()
+            onDeleteClick = { kategori ->
+                selectedKategori.value = kategori // Simpan kategori yang dipilih
+                showDialog.value = true // Tampilkan dialog konfirmasi
             },
             onUpdateKategoriClick = onUpdateKategoriClick
         )
     }
+
+    // Dialog konfirmasi hapus
+    if (showDialog.value && selectedKategori.value != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = { Text("Konfirmasi Hapus") },
+            text = { Text("Apakah Anda yakin ingin menghapus kategori ini?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        selectedKategori.value?.let { kategori ->
+                            viewModel.deleteKategori(kategori.id_kategori)
+                            viewModel.getKategori()
+                        }
+                        showDialog.value = false
+                    }
+                ) {
+                    Text("Ya")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog.value = false }) {
+                    Text("Tidak")
+                }
+            }
+        )
+    }
 }
+
 
 @Composable
 fun HomeStatus(
