@@ -100,7 +100,9 @@ fun UpdateKategoriView(
 
                             )
                             viewModel.ambilKategori()
-                            navigateBack() // Navigate back after saving
+                            if (viewModel.errorMessage.isEmpty()) {
+                                navigateBack()
+                            }
                         }
                     }
                 }
