@@ -128,10 +128,7 @@ fun TambahBodyPenulis(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth(),
-            enabled = insertPenulisUiState.insertPenulisUiEvent.nama_penulis.isNotEmpty() &&
-                    insertPenulisUiState.insertPenulisUiEvent.biografi.isNotEmpty() &&
-                    insertPenulisUiState.insertPenulisUiEvent.kontak.isNotEmpty() &&
-                    errorMessage.isEmpty()
+
         ) {
             Text(text = "Simpan")
         }
