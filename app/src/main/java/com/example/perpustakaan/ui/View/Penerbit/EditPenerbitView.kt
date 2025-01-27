@@ -98,7 +98,9 @@ fun UpdateTerbitView(
 
                             )
                             viewModel.ambilPenerbit()
-                            navigateBack() // Navigate back after saving
+                            if (viewModel.errorMessage.isEmpty()) {
+                                navigateBack()
+                            }
                         }
                     }
                 }
