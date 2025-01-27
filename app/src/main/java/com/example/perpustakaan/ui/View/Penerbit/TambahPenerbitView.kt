@@ -149,7 +149,7 @@ fun FormInputPenerbit(
         OutlinedTextField(
             value = insertPenerbitUiEvent.nama_penerbit,
             onValueChange = {onValueChange(insertPenerbitUiEvent.copy(nama_penerbit = it))},
-            label = { Text("Nama") },
+            label = { Text("Nama Penerbit") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
@@ -167,7 +167,7 @@ fun FormInputPenerbit(
         OutlinedTextField(
             value = insertPenerbitUiEvent.alamat_penerbit,
             onValueChange = {onValueChange(insertPenerbitUiEvent.copy(alamat_penerbit = it))},
-            label = { Text("Alamat") },
+            label = { Text("Alamat Penerbit") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
