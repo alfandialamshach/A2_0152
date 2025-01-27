@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.perpustakaan.ui.View.Kategori.DestinasiDetailKategori
+import com.example.perpustakaan.ui.View.Penerbit.DestinasiDetailPenerbit
 import kotlinx.coroutines.launch
 
 
@@ -16,7 +17,7 @@ class DetailPenerbitViewModel(
 ) : ViewModel() {
 
     // Retrieve the id_buku from SavedStateHandle
-    val id_penerbit: Int = checkNotNull(savedStateHandle[DestinasiDetailKategori.ID_Kategori])
+    val id_penerbit: Int = checkNotNull(savedStateHandle[DestinasiDetailPenerbit.ID_Penerbit])
 
     var penerbitUiState = mutableStateOf(InsertPenerbitUiEvent(id_penerbit))
         private set
