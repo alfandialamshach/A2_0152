@@ -78,6 +78,7 @@ class UpdateBukuViewModel(
     fun updateBuku(buku: Buku) {
 
         val uiEvent = bukuUiState.value.insertBukuUiEvent
+        errorMessage = ""
         // Validation
         if (uiEvent.nama_buku.isEmpty()) {
             errorMessage = "Nama Buku tidak boleh kosong"
