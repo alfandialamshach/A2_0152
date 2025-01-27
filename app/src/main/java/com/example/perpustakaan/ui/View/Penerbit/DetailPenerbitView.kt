@@ -1,46 +1,33 @@
-package com.example.perpustakaan.ui.View.Penerbit
+package com.example.perpustakaan.ui.View.Penerbit;
 
-
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.perpustakaan.Navigasi.DestinasiNavigasi
-import com.example.perpustakaan.ui.ViewModel.Penerbit.DetailPenerbitViewModel
-import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitUiEvent
-import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
-import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
-import com.example.perpustakaan.ui.Widget.CustomTopAppBar
-
+import androidx.compose.foundation.clickable;
+import androidx.compose.foundation.layout.*;
+import androidx.compose.material.icons.Icons;
+import androidx.compose.material.icons.filled.Edit;
+import androidx.compose.material3.*;
+import androidx.compose.runtime.Composable;
+import androidx.compose.runtime.getValue;
+import androidx.compose.ui.Alignment;
+import androidx.compose.ui.Modifier;
+import androidx.compose.ui.graphics.Color;
+import androidx.compose.ui.input.nestedscroll.nestedScroll;
+import androidx.compose.ui.text.font.FontWeight;
+import androidx.compose.ui.unit.dp;
+import androidx.compose.ui.unit.sp;
+import androidx.lifecycle.viewmodel.compose.viewModel;
+import com.example.perpustakaan.Navigasi.DestinasiNavigasi;
+import com.example.perpustakaan.ui.ViewModel.Penerbit.DetailPenerbitViewModel;
+import com.example.perpustakaan.ui.ViewModel.Penerbit.InsertPenerbitUiEvent;
+import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel;
+import com.example.perpustakaan.ui.Widget.CustomBottomAppBar;
+import com.example.perpustakaan.ui.Widget.CustomTopAppBar;
 
 object DestinasiDetailPenerbit : DestinasiNavigasi {
-    override val route = "detailpnr"
-    const val ID_Penerbit = "id_penerbit"
-    val routesWithArg = "$route/{$ID_Penerbit}"
+    override val route = "detailpnr";
+    const val ID_Penerbit = "id_penerbit";
+    val routesWithArg = "$route/{$ID_Penerbit}";
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailPenerbitView(
@@ -52,27 +39,26 @@ fun DetailPenerbitView(
     onKategoriClick: () -> Unit,
     onProfilClick: () -> Unit,
     onAddClick: () -> Unit,
-    onHomeClick: () -> Unit = {},
-
-    ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    onHomeClick: () -> Unit = {}
+) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior();
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                judul = "Detail Buku",
+                judul = "Detail Penerbit",
                 onKategoriClick = onKategoriClick,
                 onPenulisClick = onPenulisClick,
                 onPenerbitClick = {},
                 scrollBehavior = scrollBehavior,
                 onRefresh = {
-                    viewModel.ambilDetailPenerbit()
+                    viewModel.ambilDetailPenerbit();
                 },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
-            )
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = true,
+                isPenerbitEnabled = false
+            );
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -83,7 +69,7 @@ fun DetailPenerbitView(
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit Buku"
-                )
+                );
             }
         },
         bottomBar = {
@@ -91,37 +77,33 @@ fun DetailPenerbitView(
                 isBackEnabled = false,
                 onHomeClick = onHomeClick,
                 onProfileClick = onProfilClick,
-                onAddDataClick = onAddClick, // Navigate to item entry when Add Data is clicked
-                onBackClick = {  } // Handle Back click action
-            )
+                onAddDataClick = onAddClick,
+                onBackClick = {}
+            );
         },
     ) { innerPadding ->
-        val penerbitUiState by viewModel.penerbitUiState
+        val penerbitUiState by viewModel.penerbitUiState;
 
         BodyDetailBuku(
             modifier = Modifier.padding(innerPadding),
-            penerbitUiState = penerbitUiState,
-            //onItemClick = onItemClick // Menambahkan onItemClick ke BodyDetailBuku
-        )
+            penerbitUiState = penerbitUiState
+        );
     }
 }
 
 @Composable
 fun BodyDetailBuku(
     modifier: Modifier = Modifier,
-    penerbitUiState: InsertPenerbitUiEvent,
-    // onItemClick: (String) -> Unit
+    penerbitUiState: InsertPenerbitUiEvent
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+        Spacer(modifier = Modifier.height(16.dp));
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Detail buku
-        ItemDetailBuku(penerbitUiEvent = penerbitUiState)
+        ItemDetailBuku(penerbitUiEvent = penerbitUiState);
     }
 }
 
@@ -134,18 +116,18 @@ fun ItemDetailBuku(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        ),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            ComponentDetailPenerbit(judul = "ID Penerbit", isinya = penerbitUiEvent.id_penerbit)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailPenerbit(judul = "Nama Penerbit", isinya = penerbitUiEvent.nama_penerbit)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailPenerbit(judul = "Alamat Penerbit", isinya = penerbitUiEvent.alamat_penerbit)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailPenerbit(judul = "Telepon Penerbit", isinya = penerbitUiEvent.telepon_penerbit)
-
-
+            ComponentDetailPenerbit(judul = "ID Penerbit", isinya = penerbitUiEvent.id_penerbit);
+            Spacer(modifier = Modifier.height(8.dp));
+            ComponentDetailPenerbit(judul = "Nama Penerbit", isinya = penerbitUiEvent.nama_penerbit);
+            Spacer(modifier = Modifier.height(8.dp));
+            ComponentDetailPenerbit(judul = "Alamat Penerbit", isinya = penerbitUiEvent.alamat_penerbit);
+            Spacer(modifier = Modifier.height(8.dp));
+            ComponentDetailPenerbit(judul = "Telepon Penerbit", isinya = penerbitUiEvent.telepon_penerbit);
         }
     }
 }
@@ -159,23 +141,24 @@ fun ComponentDetailPenerbit(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick?.invoke() } // Menambahkan clickable pada item
+            .clickable { onClick?.invoke() }
             .padding(8.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = "$judul :",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Gray
-        )
+            text = "$judul:",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.primary
+        );
         Text(
             text = when (isinya) {
-                is Int -> isinya.toString()
-                is java.util.Date -> isinya.toString() // Format date if needed
-                else -> isinya.toString()
-            }
-        )
+                is Int -> isinya.toString();
+                is java.util.Date -> isinya.toString();
+                else -> isinya.toString();
+            },
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        );
     }
 }
-
