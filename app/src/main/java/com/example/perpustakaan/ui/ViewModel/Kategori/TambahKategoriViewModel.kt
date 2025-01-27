@@ -19,7 +19,7 @@ class InsertKategoriViewModel(private val kategori: KategoriRepository) : ViewMo
     }
 
     suspend fun insertKategori() {
-
+        errorMessage = ""
         val uiEvent = kategoriuiState.insertKategoriUiEvent
         // Validation
         if (uiEvent.nama_kategori.isEmpty()) {
