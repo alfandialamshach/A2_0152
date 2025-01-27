@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +32,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -58,18 +61,21 @@ object DestinasiHomePenerbit: DestinasiNavigasi {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePenerbit(
-    navigateToItemEntry:()->Unit,
+    navigateToItemEntry: () -> Unit,
     onProfilClick: () -> Unit,
     onHomeClick: () -> Unit = {},
     onPenulisClick: () -> Unit,
     onKategoriClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onDetailClick: (Int) -> Unit ={},
-    onUpdateTerbitClick: (Penerbit) -> Unit, // Menambahkan parameter untuk update
+    onDetailClick: (Int) -> Unit = {},
+    onUpdateTerbitClick: (Penerbit) -> Unit,
     viewModel: HomePenerbitViewModel = viewModel(factory = PenyediaViewModel.Factory)
-){
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val navController = rememberNavController()
+    val (showDeleteDialog, setShowDeleteDialog) = remember { mutableStateOf(false) }
+    val selectedPenerbit = remember { mutableStateOf<Penerbit?>(null) }
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -79,37 +85,62 @@ fun HomePenerbit(
                 onPenulisClick = onPenulisClick,
                 onPenerbitClick = {},
                 scrollBehavior = scrollBehavior,
-                onRefresh = {
-                    viewModel.getPenerbit()
-                },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = true, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = false // Menonaktifkan menu Mata Kuliah
+                onRefresh = { viewModel.getPenerbit() },
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = true,
+                isPenerbitEnabled = false
             )
         },
-
         bottomBar = {
             CustomBottomAppBar(
-                isBackEnabled =false,
+                isBackEnabled = false,
                 onHomeClick = onHomeClick,
                 onProfileClick = onProfilClick,
-                onAddDataClick = navigateToItemEntry, // Navigate to item entry when Add Data is clicked
-                onBackClick = { } // Handle Back click action
+                onAddDataClick = navigateToItemEntry,
+                onBackClick = { }
             )
         },
-    ) { innerPadding->
+    ) { innerPadding ->
         HomeStatus(
             homePenerbitUiState = viewModel.penerbitUiState,
-            retryAction = {viewModel.getPenerbit()}, modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick,onDeleteClick = {
-                viewModel.deletePenerbit(it.id_penerbit)
-                viewModel.getPenerbit()
+            retryAction = { viewModel.getPenerbit() },
+            modifier = Modifier.padding(innerPadding),
+            onDetailClick = onDetailClick,
+            onDeleteClick = { penerbit ->
+                selectedPenerbit.value = penerbit
+                setShowDeleteDialog(true)
             },
-            onUpdateTerbitClick = onUpdateTerbitClick // Menggunakan fungsi update
+            onUpdateTerbitClick = onUpdateTerbitClick
+        )
+    }
+
+    // Konfirmasi penghapusan
+    if (showDeleteDialog && selectedPenerbit.value != null) {
+        AlertDialog(
+            onDismissRequest = { setShowDeleteDialog(false) },
+            title = { Text(text = "Konfirmasi Penghapusan") },
+            text = { Text("Apakah Anda yakin ingin menghapus data penerbit ini?") },
+            confirmButton = {
+                Button(onClick = {
+                    selectedPenerbit.value?.let {
+                        viewModel.deletePenerbit(it.id_penerbit)
+                        viewModel.getPenerbit()
+                    }
+                    setShowDeleteDialog(false)
+                }) {
+                    Text("Hapus")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { setShowDeleteDialog(false) }) {
+                    Text("Batal")
+                }
+            }
         )
     }
 }
+
 
 @Composable
 fun HomeStatus(
