@@ -20,7 +20,7 @@ class InsertPenulisViewModel(private val penulis: PenulisRepository) : ViewModel
 
     suspend fun insertPenulis() {
         val uiEvent = penulisuiState.insertPenulisUiEvent
-
+        errorMessage = ""
         // Validation
         if (uiEvent.nama_penulis.isEmpty()) {
             errorMessage = "Nama penulis tidak boleh kosong"
