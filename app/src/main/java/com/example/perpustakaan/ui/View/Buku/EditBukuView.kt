@@ -103,9 +103,10 @@ fun UpdateBukuView(
 
                             // Reload data after update
                             viewModel.loadBukuData()
+                            if (viewModel.errorMessage.isEmpty()) {
+                                navigateBack()
+                            }
 
-                            // Navigate back after saving
-                            navigateBack()
                         }
                     }
                 }
