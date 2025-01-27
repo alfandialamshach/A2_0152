@@ -54,6 +54,7 @@ class UpdatePenerbitViewModel(
     // Update the penerbit information
     fun updatePenerbit(id_penerbit: Int, penerbit: Penerbit) {
         val uiEvent = penerbituiState.value.insertPenerbitUiEvent
+        errorMessage = ""
         // Validation
         if (uiEvent.nama_penerbit.isEmpty()) {
             errorMessage = "Nama penerbit tidak boleh kosong"
