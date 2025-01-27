@@ -47,7 +47,7 @@ class UpdateKategoriViewModel(
 
     // Update the penerbit information
     fun updateKategori(id_kategori: Int, kategori: Kategori) {
-
+        errorMessage = ""
         val uiEvent = kategoriuiState.value.insertKategoriUiEvent
         // Validation
         if (uiEvent.nama_kategori.isEmpty()) {
