@@ -1,24 +1,11 @@
 package com.example.perpustakaan.ui.View.Penulis
 
-
-
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,12 +23,12 @@ import com.example.perpustakaan.ui.ViewModel.PenyediaViewModel
 import com.example.perpustakaan.ui.Widget.CustomBottomAppBar
 import com.example.perpustakaan.ui.Widget.CustomTopAppBar
 
-
 object DestinasiDetailPenulis : DestinasiNavigasi {
     override val route = "detailtulis"
     const val ID_Penulis = "id_penulis"
     val routesWithArg = "$route/{$ID_Penulis}"
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailPenulisView(
@@ -54,14 +41,13 @@ fun DetailPenulisView(
     onProfilClick: () -> Unit,
     onAddClick: () -> Unit,
     onHomeClick: () -> Unit = {},
-
-    ) {
+) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CustomTopAppBar(
-                judul = "Detail Buku",
+                judul = "Detail Penulis",
                 onKategoriClick = onKategoriClick,
                 onPenulisClick = {},
                 onPenerbitClick = onPenerbitClick,
@@ -69,21 +55,22 @@ fun DetailPenulisView(
                 onRefresh = {
                     viewModel.ambilDetailPenulis()
                 },
-                isMenuEnabled = true, // Menampilkan ikon menu
-                isKategoriEnabled = true, // Mengaktifkan menu Dosen
-                isPenulisEnabled = false, // Menonaktifkan menu Mata Kuliah
-                isPenerbitEnabled = true // Menonaktifkan menu Mata Kuliah
+                isMenuEnabled = true,
+                isKategoriEnabled = true,
+                isPenulisEnabled = false,
+                isPenerbitEnabled = true
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { onEditClick(id_penulis) },
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(16.dp)
+                shape = RoundedCornerShape(50),
+                containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Buku"
+                    contentDescription = "Edit Penulis",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         },
@@ -92,61 +79,58 @@ fun DetailPenulisView(
                 isBackEnabled = false,
                 onHomeClick = onHomeClick,
                 onProfileClick = onProfilClick,
-                onAddDataClick = onAddClick, // Navigate to item entry when Add Data is clicked
-                onBackClick = {  } // Handle Back click action
+                onAddDataClick = onAddClick,
+                onBackClick = {}
             )
         },
     ) { innerPadding ->
         val penulisUiState by viewModel.penulisUiState
 
-        BodyDetailBuku(
+        BodyDetailPenulis(
             modifier = Modifier.padding(innerPadding),
-            penulisUiState = penulisUiState,
-            //onItemClick = onItemClick // Menambahkan onItemClick ke BodyDetailBuku
+            penulisUiState = penulisUiState
         )
     }
 }
 
 @Composable
-fun BodyDetailBuku(
+fun BodyDetailPenulis(
     modifier: Modifier = Modifier,
-    penulisUiState: InsertPenulisUiEvent,
-    // onItemClick: (String) -> Unit
+    penulisUiState: InsertPenulisUiEvent
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Detail buku
-        ItemDetailBuku(penulisUiEvent = penulisUiState)
+        ItemDetailPenulis(penulisUiEvent = penulisUiState)
     }
 }
 
 @Composable
-fun ItemDetailBuku(
+fun ItemDetailPenulis(
     penulisUiEvent: InsertPenulisUiEvent
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             ComponentDetailPenulis(judul = "ID Penulis", isinya = penulisUiEvent.id_penulis)
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             ComponentDetailPenulis(judul = "Nama Penulis", isinya = penulisUiEvent.nama_penulis)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailPenulis(judul = "Alamat Penerbit", isinya = penulisUiEvent.biografi)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailPenulis(judul = "Telepon Penerbit", isinya = penulisUiEvent.kontak)
-
-
+            Spacer(modifier = Modifier.height(8.dp))
+            ComponentDetailPenulis(judul = "Biografi", isinya = penulisUiEvent.biografi)
+            Spacer(modifier = Modifier.height(8.dp))
+            ComponentDetailPenulis(judul = "Kontak", isinya = penulisUiEvent.kontak)
         }
     }
 }
@@ -160,23 +144,25 @@ fun ComponentDetailPenulis(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick?.invoke() } // Menambahkan clickable pada item
-            .padding(8.dp),
+            .clickable(enabled = onClick != null) { onClick?.invoke() }
+            .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = "$judul :",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Gray
+            text = "$judul:",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.secondary
         )
         Text(
             text = when (isinya) {
                 is Int -> isinya.toString()
-                is java.util.Date -> isinya.toString() // Format date if needed
+                is java.util.Date -> isinya.toString()
                 else -> isinya.toString()
-            }
+            },
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
 }
-
