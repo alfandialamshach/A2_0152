@@ -162,7 +162,7 @@ fun HomeStatus(
                     Text(text = "Tidak ada data buku", style = MaterialTheme.typography.bodyLarge)
                 }
             }else{
-                BukuList(
+                KategoriList(
                     kategori = homeKategoriUiState.kategori,modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
                         onDetailClick(it.id_kategori)
@@ -222,7 +222,7 @@ fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
 }
 
 @Composable
-fun BukuList(
+fun KategoriList(
     kategori: List<Kategori>,
     modifier: Modifier = Modifier,
     onDetailClick:(Kategori)->Unit,
