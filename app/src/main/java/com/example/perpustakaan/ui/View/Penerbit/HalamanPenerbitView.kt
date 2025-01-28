@@ -164,7 +164,7 @@ fun HomeStatus(
                     Text(text = "Tidak ada data buku", style = MaterialTheme.typography.bodyLarge)
                 }
             }else{
-                BukuList(
+                PenerbitList(
                     penerbit = homePenerbitUiState.penerbit,modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
                         onDetailClick(it.id_penerbit)
@@ -224,7 +224,7 @@ fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
 }
 
 @Composable
-fun BukuList(
+fun PenerbitList(
     penerbit: List<Penerbit>,
     modifier: Modifier = Modifier,
     onDetailClick:(Penerbit)->Unit,
