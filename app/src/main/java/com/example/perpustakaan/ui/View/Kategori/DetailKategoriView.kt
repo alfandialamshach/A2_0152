@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -122,32 +124,36 @@ fun BodyDetailBuku(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Detail buku
-        ItemDetailBuku(kategoriUiEvent = kategoriUiState)
+        ItemDetailKategori(kategoriUiEvent = kategoriUiState)
     }
 }
 
 @Composable
-fun ItemDetailBuku(
+fun ItemDetailKategori(
     kategoriUiEvent: InsertKategoriUiEvent
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp), // Padding agar tidak terlalu rapat ke tepi
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Bayangan agar tampak timbul
+        shape = RoundedCornerShape(16.dp) // Sudut card lebih halus
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // ID Kategori
             ComponentDetailKategori(judul = "ID Kategori", isinya = kategoriUiEvent.id_kategori)
-            Spacer(modifier = Modifier.padding(4.dp))
+            // Nama Kategori
             ComponentDetailKategori(judul = "Nama Kategori", isinya = kategoriUiEvent.nama_kategori)
-            Spacer(modifier = Modifier.padding(4.dp))
-            ComponentDetailKategori(judul = "Deskripsi Buku", isinya = kategoriUiEvent.deskripsi_kategori)
-
-
+            // Deskripsi Kategori
+            ComponentDetailKategori(judul = "Deskripsi Kategori", isinya = kategoriUiEvent.deskripsi_kategori)
         }
     }
 }
+
 
 @Composable
 fun ComponentDetailKategori(
