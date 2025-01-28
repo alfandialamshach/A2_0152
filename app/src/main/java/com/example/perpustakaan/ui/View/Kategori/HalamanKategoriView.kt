@@ -1,6 +1,7 @@
 package com.example.perpustakaan.ui.View.Kategori
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -49,6 +52,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 
 object DestinasiHomeKategori: DestinasiNavigasi {
     override val route = "home_kategori"
@@ -231,7 +235,7 @@ fun BukuList(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(kategori){ kategori ->
-            BukuCard(
+            KategoriCard(
                 kategori = kategori,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -247,21 +251,20 @@ fun BukuList(
         }
     }
 }
-
 @Composable
-fun BukuCard(
+fun KategoriCard(
     kategori: Kategori,
     modifier: Modifier = Modifier,
-    onDeleteClick:(Kategori)->Unit={},
+    onDeleteClick: (Kategori) -> Unit = {},
     onUpdateKategoriClick: (Kategori) -> Unit = {}  // Menambahkan parameter untuk update
-){
+) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = Color(0xFFC6A49A), // Warna biru
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Column(
@@ -276,32 +279,59 @@ fun BukuCard(
                     text = kategori.id_kategori.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp // Jika ingin lebih besar
+                        fontSize = 30.sp
                     )
                 )
 
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = { onDeleteClick(kategori) }) {
+
+                // Tombol Delete dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onDeleteClick(kategori) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF783722), // Warna oranye lembut untuk Delete
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-                // Tombol Update
-                IconButton(onClick = { onUpdateKategoriClick(kategori) }) {
+
+                Spacer(modifier = Modifier.width(16.dp)) // Jarak antara tombol Delete dan Update
+
+                // Tombol Update dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onUpdateKategoriClick(kategori) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF783722), // Warna biru muda untuk Update
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,  // Menambahkan icon Edit untuk tombol Update
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
+
+            // Tampilkan nama kategori
             Text(
                 text = kategori.nama_kategori,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
             )
-
         }
     }
 }
