@@ -133,7 +133,7 @@ fun PengelolaHalaman(
                             when {
                                 item.startsWith("Kategori") -> {
                                     // Navigasi ke DestinasiUpdateBuku dengan id_buku
-                                    navController.navigate("${DestinasiUpdateBuku.route}/$id_buku")
+                                    navController.navigate(DestinasiHomeKategori.route)
                                 }
                                 item.startsWith("Penulis") -> {
                                     // Navigasi ke DestinasiHomePenulis
