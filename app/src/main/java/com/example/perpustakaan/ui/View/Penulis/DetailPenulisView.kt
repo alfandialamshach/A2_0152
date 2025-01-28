@@ -120,20 +120,37 @@ fun ItemDetailPenulis(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        shape = RoundedCornerShape(16.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Elevasi untuk bayangan
+        shape = RoundedCornerShape(16.dp) // Sudut rounded
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // ID Penulis
             ComponentDetailPenulis(judul = "ID Penulis", isinya = penulisUiEvent.id_penulis)
-            Spacer(modifier = Modifier.height(8.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis pemisah lebih jelas
+            )
+
+            // Nama Penulis
             ComponentDetailPenulis(judul = "Nama Penulis", isinya = penulisUiEvent.nama_penulis)
-            Spacer(modifier = Modifier.height(8.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis pemisah lebih jelas
+            )
+
+            // Biografi
             ComponentDetailPenulis(judul = "Biografi", isinya = penulisUiEvent.biografi)
-            Spacer(modifier = Modifier.height(8.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) // Garis pemisah lebih halus
+            )
+
+            // Kontak
             ComponentDetailPenulis(judul = "Kontak", isinya = penulisUiEvent.kontak)
         }
     }
 }
+
 
 @Composable
 fun ComponentDetailPenulis(
