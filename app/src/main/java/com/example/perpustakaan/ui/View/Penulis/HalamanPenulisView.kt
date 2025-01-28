@@ -165,7 +165,7 @@ fun HomeStatus(
                     Text(text = "Tidak ada data penulis", style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
-                BukuList(
+                PenulisList(
                     penulis = homePenulisUiState.penulis,
                     modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
@@ -225,7 +225,7 @@ fun OnError(retryAction: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BukuList(
+fun PenulisList(
     penulis: List<Penulis>,
     modifier: Modifier = Modifier,
     onDetailClick: (Penulis) -> Unit,
