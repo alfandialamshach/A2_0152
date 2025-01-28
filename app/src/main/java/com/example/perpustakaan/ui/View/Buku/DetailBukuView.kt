@@ -133,27 +133,56 @@ fun ItemDetailBuku(
     } ?: "Tanggal tidak tersedia"
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp), // Menambahkan padding di luar Card
+        shape = MaterialTheme.shapes.medium, // Sudut melengkung
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Gunakan CardDefaults.elevation
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // Detail Buku pertama
             ComponentDetailBuku(judul = "ID Buku", isinya = bukuUiEvent.id_buku)
-            Spacer(modifier = Modifier.padding(4.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f) // Garis lebih jelas
+            )
+
+            // Detail Buku kedua
             ComponentDetailBuku(judul = "Nama Buku", isinya = bukuUiEvent.nama_buku)
-            Spacer(modifier = Modifier.padding(4.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis lebih jelas
+            )
+
+            // Detail Buku ketiga
             ComponentDetailBuku(judul = "Deskripsi Buku", isinya = bukuUiEvent.deskripsi_buku)
-            Spacer(modifier = Modifier.padding(4.dp))
-            // Menampilkan tanggal terbit yang sudah diformat
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis lebih jelas
+            )
+
+            // Menampilkan tanggal terbit
             ComponentDetailBuku(judul = "Tanggal Terbit", isinya = formattedTanggalTerbit)
-            Spacer(modifier = Modifier.padding(4.dp))
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis lebih jelas
+            )
+
+            // Status Buku
             ComponentDetailBuku(judul = "Status Buku", isinya = bukuUiEvent.status_buku)
-            Spacer(modifier = Modifier.padding(4.dp))
         }
     }
 }
+
+
+
+
+
+
 @Composable
 fun ComponentDetailBuku(
     judul: String,
@@ -195,56 +224,63 @@ fun PilihanKategoriPenulisPenerbit(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-        )
-
+        ),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Menurunkan elevasi bayangan
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Menambahkan clickable pada kategori dengan efek timbul
+        Column(modifier = Modifier.padding(8.dp)) { // Mengurangi padding untuk ukuran kompak
+            // Kategori
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onItemClick("Kategori: $kategori") }
-                    .padding(8.dp)
-                    .shadow(4.dp, shape = MaterialTheme.shapes.medium) // Efek timbul
-                    .background(MaterialTheme.colorScheme.surface) // Background untuk meningkatkan kontras
+                    .padding(8.dp) // Mengurangi padding dalam row
+                    .background(MaterialTheme.colorScheme.surface)
+                    .shadow(2.dp, shape = MaterialTheme.shapes.medium) // Menurunkan bayangan
+                    .padding(12.dp) // Padding di dalam row lebih kecil
             ) {
                 Text(
                     text = "Kategori: $kategori",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp, // Ukuran font lebih kecil
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.height(4.dp)) // Mengurangi jarak antar elemen
 
-            // Menambahkan clickable pada penulis dengan efek timbul
+            // Penulis
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onItemClick("Penulis: $penulis") }
                     .padding(8.dp)
-                    .shadow(4.dp, shape = MaterialTheme.shapes.medium) // Efek timbul
-                    .background(MaterialTheme.colorScheme.surface) // Background untuk meningkatkan kontras
+                    .background(MaterialTheme.colorScheme.surface)
+                    .shadow(2.dp, shape = MaterialTheme.shapes.medium)
+                    .padding(12.dp)
             ) {
                 Text(
                     text = "Penulis: $penulis",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp, // Ukuran font lebih kecil
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
-            // Menambahkan clickable pada penerbit dengan efek timbul
+            // Penerbit
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onItemClick("Penerbit: $penerbit") }
                     .padding(8.dp)
-                    .shadow(4.dp, shape = MaterialTheme.shapes.medium) // Efek timbul
-                    .background(MaterialTheme.colorScheme.surface) // Background untuk meningkatkan kontras
+                    .background(MaterialTheme.colorScheme.surface)
+                    .shadow(2.dp, shape = MaterialTheme.shapes.medium)
+                    .padding(12.dp)
             ) {
                 Text(
                     text = "Penerbit: $penerbit",
-                    fontSize = 18.sp,
+                    fontSize = 16.sp, // Ukuran font lebih kecil
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
