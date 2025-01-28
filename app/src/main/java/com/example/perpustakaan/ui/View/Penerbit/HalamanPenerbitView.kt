@@ -2,6 +2,7 @@ package com.example.perpustakaan.ui.View.Penerbit
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -36,6 +39,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -233,7 +237,7 @@ fun BukuList(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(penerbit){ penerbit ->
-            BukuCard(
+            PenerbitCard(
                 penerbit = penerbit,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -249,22 +253,20 @@ fun BukuList(
         }
     }
 }
-
 @Composable
-fun BukuCard(
+fun PenerbitCard(
     penerbit: Penerbit,
     modifier: Modifier = Modifier,
-    onDeleteClick:(Penerbit)->Unit={},
+    onDeleteClick: (Penerbit) -> Unit = {},
     onUpdateTerbitClick: (Penerbit) -> Unit = {}  // Menambahkan parameter untuk update
-
-){
+) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = Color(0xFF94BA96), // Warna biru
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Column(
@@ -279,45 +281,68 @@ fun BukuCard(
                     text = penerbit.id_penerbit.toString(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp // Jika ingin lebih besar
+                        fontSize = 30.sp
                     )
                 )
 
-
-
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {onDeleteClick(penerbit)}) {
+
+                // Tombol Delete dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onDeleteClick(penerbit) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF134C46), // Warna oranye lembut untuk Delete
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
 
-                // Tombol Update
-                IconButton(onClick = { onUpdateTerbitClick(penerbit) }) {
+                Spacer(modifier = Modifier.width(16.dp)) // Jarak antara tombol Delete dan Update
+
+                // Tombol Update dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onUpdateTerbitClick(penerbit) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF134C46), // Warna biru muda untuk Update
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,  // Menambahkan icon Edit untuk tombol Update
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
+
+            // Tampilkan nama penerbit
             Text(
                 text = penerbit.nama_penerbit,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.SemiBold, // Membuat teks tebal
-                    fontSize = 20.sp // Menyesuaikan ukuran teks
-                )
-            )
-            Text(
-                text = penerbit.telepon_penerbit,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Normal, // Tetap normal (tidak bold)
-                    fontSize = 18.sp // Ukuran sedikit lebih kecil untuk perbedaan visual
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
                 )
             )
 
+            // Tampilkan nomor telepon penerbit
+            Text(
+                text = penerbit.telepon_penerbit,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp
+                )
+            )
         }
     }
 }
