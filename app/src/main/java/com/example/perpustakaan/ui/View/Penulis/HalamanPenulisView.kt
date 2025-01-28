@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -237,7 +238,7 @@ fun BukuList(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(penulis) { penulis ->
-            BukuCard(
+            PenulisCard(
                 penulis = penulis,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -252,104 +253,100 @@ fun BukuList(
         }
     }
 }
-
 @Composable
-fun BukuCard(
+fun PenulisCard(
     penulis: Penulis,
     modifier: Modifier = Modifier,
     onDeleteClick: (Penulis) -> Unit = {},
     onUpdateClick: (Penulis) -> Unit = {},
-    deleteIconColor: Color = Color.Black, // Warna ikon delete (putih)
-    updateIconColor: Color = Color.Blue, // Warna ikon update (putih)
+    deleteIconColor: Color = Color.White,
+    updateIconColor: Color = Color.White
 ) {
-    // Card dengan gradasi dan efek bayangan
+    // Card dengan warna biru dan efek bayangan
     Card(
-        modifier = modifier
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color(0xFFF1F1F1), Color(0xFFE0E0E0)), // Gradasi warna abu-abu terang ke gelap
-                    start = Offset(0f, 0f),
-                    end = Offset(0f, 1000f)
-                )
-            ),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
-
+        modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFA38FC9), // Warna biru
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        )
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // ID Penulis
                 Text(
                     text = penulis.id_penulis.toString(),
-                    style = TextStyle(
+                    style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp,
-
-                        )
-
+                        fontSize = 30.sp
+                    )
                 )
 
                 Spacer(Modifier.weight(1f))
 
-                // Tombol Hapus dengan efek timbul
-                IconButton(onClick = { onDeleteClick(penulis) }) {
+                // Tombol Delete dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onDeleteClick(penulis) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF4E347D), // Warna oranye lembut untuk Delete
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete",
-                        tint = deleteIconColor,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .size(60.dp)
-                            .graphicsLayer {
-                                // Menambahkan efek timbul untuk ikon
-                                shadowElevation = 4.dp.toPx() // Elevasi bayangan
-                                shape = CircleShape
-                                clip = true
-                            }
+                        tint = deleteIconColor
                     )
                 }
 
-                // Tombol Update dengan efek timbul
-                IconButton(onClick = { onUpdateClick(penulis) }) {
+                Spacer(modifier = Modifier.width(16.dp)) // Jarak antara tombol Delete dan Update
+
+                // Tombol Update dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onUpdateClick(penulis) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF4E347D), // Warna oranye lembut untuk Update
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Update",
-                        tint = updateIconColor,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .size(60.dp)
-                            .graphicsLayer {
-                                // Menambahkan efek timbul untuk ikon
-                                shadowElevation = 4.dp.toPx()
-                                shape = CircleShape
-                                clip = true
-                            }
+                        tint = updateIconColor
                     )
                 }
             }
 
-            // Nama Penulis dengan efek timbul
+            // Nama Penulis
             Text(
                 text = penulis.nama_penulis,
-                style = TextStyle(
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    )
-            )
-
-            // Biografi penulis dengan sedikit transparansi dan efek timbul
-            Text(
-                text = penulis.biografi,
-                style = TextStyle(
-                    fontSize = 18.sp,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
                 )
             )
 
+            // Biografi penulis
+            Text(
+                text = penulis.biografi,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp
+                )
+            )
         }
     }
 }
