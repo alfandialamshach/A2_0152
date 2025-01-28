@@ -103,12 +103,12 @@ fun BodyDetailBuku(
     ) {
         Spacer(modifier = Modifier.height(16.dp));
 
-        ItemDetailBuku(penerbitUiEvent = penerbitUiState);
+        ItemDetailPenerbit(penerbitUiEvent = penerbitUiState);
     }
 }
 
 @Composable
-fun ItemDetailBuku(
+fun ItemDetailPenerbit(
     penerbitUiEvent: InsertPenerbitUiEvent
 ) {
     Card(
@@ -118,16 +118,32 @@ fun ItemDetailBuku(
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(8.dp)
+        elevation = CardDefaults.cardElevation(8.dp) // Elevasi untuk bayangan
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            ComponentDetailPenerbit(judul = "ID Penerbit", isinya = penerbitUiEvent.id_penerbit);
-            Spacer(modifier = Modifier.height(8.dp));
-            ComponentDetailPenerbit(judul = "Nama Penerbit", isinya = penerbitUiEvent.nama_penerbit);
-            Spacer(modifier = Modifier.height(8.dp));
-            ComponentDetailPenerbit(judul = "Alamat Penerbit", isinya = penerbitUiEvent.alamat_penerbit);
-            Spacer(modifier = Modifier.height(8.dp));
-            ComponentDetailPenerbit(judul = "Telepon Penerbit", isinya = penerbitUiEvent.telepon_penerbit);
+            // ID Penerbit
+            ComponentDetailPenerbit(judul = "ID Penerbit", isinya = penerbitUiEvent.id_penerbit)
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f) // Garis lebih jelas
+            )
+
+            // Nama Penerbit
+            ComponentDetailPenerbit(judul = "Nama Penerbit", isinya = penerbitUiEvent.nama_penerbit)
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis lebih jelas
+            )
+
+            // Alamat Penerbit
+            ComponentDetailPenerbit(judul = "Alamat Penerbit", isinya = penerbitUiEvent.alamat_penerbit)
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f) // Garis lebih jelas
+            )
+
+            // Telepon Penerbit
+            ComponentDetailPenerbit(judul = "Telepon Penerbit", isinya = penerbitUiEvent.telepon_penerbit)
         }
     }
 }
