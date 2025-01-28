@@ -1,6 +1,7 @@
 package com.example.perpustakaan.ui.View.Home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -35,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -257,14 +263,12 @@ fun BukuList(
         }
     }
 }
-
-
 @Composable
 fun BukuCard(
     buku: Buku,
     modifier: Modifier = Modifier,
     onDeleteClick: (Buku) -> Unit = {},
-    onUpdateBukuClick: (Buku) -> Unit = {}  // Menambahkan parameter untuk update
+    onUpdateBukuClick: (Buku) -> Unit = {}
 ) {
     // Format tanggal menggunakan SimpleDateFormat
     val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
@@ -275,8 +279,8 @@ fun BukuCard(
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = Color(0xFF84A2A7), // Warna biru
+            contentColor = MaterialTheme.colorScheme.onPrimary
         )
     ) {
         Column(
@@ -291,43 +295,83 @@ fun BukuCard(
                     text = buku.nama_buku,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp // Jika ingin lebih besar
+                        fontSize = 30.sp
                     )
                 )
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = { onDeleteClick(buku) }) {
+
+                // Tombol Delete dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onDeleteClick(buku) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF616161), // Warna oranye lembut untuk Delete
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
+                        contentDescription = "Delete",
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
-                // Tombol Update
-                IconButton(onClick = { onUpdateBukuClick(buku) }) {
+
+                Spacer(modifier = Modifier.width(16.dp)) // Jarak antara tombol Delete dan Update
+
+                // Tombol Update dengan desain lebih menarik dan jarak
+                IconButton(
+                    onClick = { onUpdateBukuClick(buku) },
+                    modifier = Modifier
+                        .size(40.dp) // Ukuran lebih besar
+                        .background(
+                            color = Color(0xFF616161), // Warna biru muda untuk Update
+                            shape = CircleShape
+                        )
+                        .padding(8.dp)
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,  // Menambahkan icon Edit untuk tombol Update
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Update",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
 
-            // Tampilkan tanggal dengan format sederhana
-            Text(
-                text = "Tanggal Terbit: $formattedDate",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp // Jika ingin lebih besar
+            // Tampilkan tanggal dengan ikon
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Tanggal Terbit",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
-            )
-            Text(
-                text = buku.deskripsi_buku,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp // Jika ingin lebih besar
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "Tanggal Terbit: $formattedDate",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
                 )
-            )
+            }
+
+            // Tampilkan deskripsi dengan ikon
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Deskripsi Buku",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = buku.deskripsi_buku,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                )
+            }
         }
     }
 }
-
