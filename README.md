@@ -1,5 +1,4 @@
-Halaman HomeUtama                                                                                         Halaman Kategori
-<img src="https://github.com/user-attachments/assets/6ea6d3ac-35b7-4d39-b2a1-531769db7a17" width="300">   <img src="https://github.com/user-attachments/assets/d7d3c5ee-6454-44a5-b678-f06842d3cad7" width="300"> 
+Halaman Home Utama <img src="https://github.com/user-attachments/assets/6ea6d3ac-35b7-4d39-b2a1-531769db7a17" width="300">  Halaman Kategori <img src="https://github.com/user-attachments/assets/d7d3c5ee-6454-44a5-b678-f06842d3cad7" width="300"> 
 Halaman Penulis <img src="https://github.com/user-attachments/assets/0515d382-f8a5-4f78-a2a6-d3b0ad1f066b" width="300">   Halaman Penerbit <img src="https://github.com/user-attachments/assets/8f51114e-9259-4409-b1c8-48b2f3a3f2be" width="300">
 
 Halaman Profil  <img src="https://github.com/user-attachments/assets/5e1ae30a-37a7-4d48-8230-7f41e5e93c65" width="300">  Halaman Tambah Penulis <img src="https://github.com/user-attachments/assets/d40466f9-776c-4842-8343-0e85def88ac7" width="300"> 
